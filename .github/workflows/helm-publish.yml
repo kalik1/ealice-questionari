@@ -31,17 +31,17 @@ jobs:
         with:
           version: v3.12.0
 
-      - name: Build Helm Dependencies
+      - name: Build and Package Helm Chart
         run: |
           cd helm
+          # Add Bitnami repository
           helm repo add bitnami https://charts.bitnami.com/bitnami
           helm repo update
+          # Build dependencies (downloads to charts/ directory)
           helm dependency build
-
-      - name: Package Helm Chart
-        run: |
-          cd helm
+          # Package the chart
           helm package .
+          # Create repository index
           helm repo index . --url https://${{ github.repository_owner }}.github.io/coop-questionari
 
       - name: Setup Pages

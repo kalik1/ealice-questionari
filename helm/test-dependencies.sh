@@ -28,6 +28,10 @@ helm dependency build
 echo "📦 Testing chart packaging..."
 helm package .
 
+# Test repository index creation
+echo "📋 Testing repository index creation..."
+helm repo index . --url https://kalik1.github.io/coop-questionari
+
 echo ""
 echo "✅ All tests completed successfully!"
 echo ""
@@ -36,5 +40,6 @@ echo "  - Bitnami repository: ✅"
 echo "  - Dependencies updated: ✅"
 echo "  - Dependencies built: ✅"
 echo "  - Chart packaged: ✅"
+echo "  - Repository index: ✅"
 echo ""
 echo "🚀 Ready to push to CI!"
