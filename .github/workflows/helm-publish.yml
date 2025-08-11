@@ -37,15 +37,10 @@ jobs:
           # Add Bitnami repository
           helm repo add bitnami https://charts.bitnami.com/bitnami
           helm repo update
-          # Build dependencies (downloads to charts/ directory)
-          helm dependency build
           
-          # Debugging: List files to see if charts/ directory is present
-          echo "--- Listing files in helm/ before packaging ---"
-          ls -R
+          # Package the chart and update dependencies atomically
+          helm package . --dependency-update
           
-          # Package the chart
-          helm package .
           # Create repository index
           helm repo index . --url https://${{ github.repository_owner }}.github.io/coop-questionari
 
@@ -96,7 +91,7 @@ jobs:
           sed -i "s/^version: .*/version: $VERSION/" Chart.yaml
           sed -i "s/^appVersion: .*/appVersion: \"$VERSION\"/" Chart.yaml
           # Package and index again
-          helm package .
+          helm package . --dependency-update
           helm repo index . --url https://${{ github.repository_owner }}.github.io/coop-questionari
         env:
           GITHUB_REF_NAME: ${{ github.ref_name }}
