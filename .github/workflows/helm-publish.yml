@@ -48,7 +48,7 @@ jobs:
         working-directory: ./helm
         run: |
           rm -f Chart.lock
-          ls -la
+          ls -la ./charts
           helm package . --dependency-update
         
       - name: Create Helm Repository Index
