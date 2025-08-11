@@ -1,4 +1,4 @@
-.PHONY: help deps build package install uninstall lint test clean
+giopil.PHONY: help deps build package install uninstall lint test clean
 
 help: ## Show this help message
 	@echo 'Usage: make [target]'

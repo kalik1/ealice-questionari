@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -34,14 +34,8 @@ jobs:
       - name: Build and Package Helm Chart
         run: |
           cd helm
-          # Add Bitnami repository
           helm repo add bitnami https://charts.bitnami.com/bitnami
-          helm repo update
-          
-          # Package the chart and update dependencies atomically
           helm package . --dependency-update
-          
-          # Create repository index
           helm repo index . --url https://${{ github.repository_owner }}.github.io/coop-questionari
 
       - name: Setup Pages
@@ -85,12 +79,9 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         run: |
           cd helm
-          # Extract version from tag (remove 'v' prefix if present)
           VERSION=${GITHUB_REF_NAME#v}
-          # Update Chart.yaml version
           sed -i "s/^version: .*/version: $VERSION/" Chart.yaml
           sed -i "s/^appVersion: .*/appVersion: \"$VERSION\"/" Chart.yaml
-          # Package and index again
           helm package . --dependency-update
           helm repo index . --url https://${{ github.repository_owner }}.github.io/coop-questionari
         env:
@@ -101,8 +92,6 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add helm/Chart.yaml
-          git add helm/*.tgz
-          git add helm/index.yaml
+          git add helm/Chart.yaml helm/*.tgz helm/index.yaml
           git commit -m "Update Helm chart to version ${{ github.ref_name }}"
           git push
