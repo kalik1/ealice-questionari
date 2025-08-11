@@ -31,20 +31,24 @@ jobs:
         with:
           version: v3.12.0
 
-      - name: Build and Package Helm Chart
+      - name: Add Helm Dependency Repositories
         working-directory: ./helm
         run: |
-          # Remove lock file to ensure a clean dependency build in CI
-          rm -f Chart.lock
-          
           helm repo add bitnami https://charts.bitnami.com/bitnami
           helm repo update
-          
-          # Atomically fetch dependencies and package the chart
-          helm package . --dependency-update
-          
-          helm repo index . --url https://${{ github.repository_owner }}.github.io/coop-questionari
 
+      - name: Update Helm Dependencies
+        working-directory: ./helm
+        run: helm dependency update .
+
+      - name: Package Helm Chart
+        working-directory: ./helm
+        run: helm package .
+        
+      - name: Create Helm Repository Index
+        working-directory: ./helm
+        run: helm repo index . --url https://${{ github.repository_owner }}.github.io/coop-questionari
+        
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
@@ -82,18 +86,15 @@ jobs:
           draft: false
           prerelease: false
 
-      - name: Update Chart Version
+      - name: Update Chart Version and Repackage
         if: startsWith(github.ref, 'refs/tags/')
         working-directory: ./helm
         run: |
-          # Remove lock file to ensure a clean dependency build in CI
-          rm -f Chart.lock
-          
           VERSION=${GITHUB_REF_NAME#v}
           sed -i "s/^version: .*/version: $VERSION/" Chart.yaml
           sed -i "s/^appVersion: .*/appVersion: \"$VERSION\"/" Chart.yaml
-          
-          helm package . --dependency-update
+          helm dependency update .
+          helm package .
           helm repo index . --url https://${{ github.repository_owner }}.github.io/coop-questionari
         env:
           GITHUB_REF_NAME: ${{ github.ref_name }}

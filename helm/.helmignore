@@ -71,3 +71,4 @@ Thumbs.db
 *.temp
 # Helm specific
 requirements.lock
+charts/
