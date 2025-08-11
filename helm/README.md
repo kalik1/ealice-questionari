@@ -30,6 +30,47 @@ helm install my-release coop-questionari/coop-questionari \
   --values custom-values.yaml
 ```
 
+## Development and Local Testing
+
+### Clone and test locally
+
+```bash
+git clone <repository-url>
+cd helm
+
+# Update dependencies
+helm dependency update
+
+# Build dependencies
+helm dependency build
+
+# Package the chart
+helm package .
+
+# Install locally
+helm install my-release .
+```
+
+### Dependency Management
+
+The chart depends on the PostgreSQL chart from Bitnami. To manage dependencies:
+
+```bash
+# Add Bitnami repository
+helm repo add bitnami https://charts.bitnami.com/bitnami
+
+# Update repositories
+helm repo update
+
+# Update dependencies
+helm dependency update
+
+# Build dependencies (downloads charts to charts/ directory)
+helm dependency build
+```
+
+**Note**: The `charts/` directory will be created after running `helm dependency build`. This directory contains the downloaded PostgreSQL chart and is required for local installation.
+
 ## Configuration
 
 The following table lists the configurable parameters of the coop-questionari chart and their default values.
@@ -125,6 +166,25 @@ The application includes health checks:
 - **Readiness probe**: `/` endpoint for frontend, `/health` for backend
 
 ## Troubleshooting
+
+### Common Issues
+
+#### PostgreSQL dependency not found
+```bash
+# Make sure Bitnami repository is added
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo update
+
+# Update and build dependencies
+helm dependency update
+helm dependency build
+```
+
+#### Charts directory missing
+```bash
+# Build dependencies to create charts/ directory
+helm dependency build
+```
 
 ### Check pod status
 

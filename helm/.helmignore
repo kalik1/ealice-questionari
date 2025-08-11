@@ -69,3 +69,6 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.temp
+# Helm specific
+charts/
+requirements.lock

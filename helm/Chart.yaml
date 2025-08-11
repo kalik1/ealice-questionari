@@ -21,3 +21,7 @@ dependencies:
     version: 13.2.32
     repository: https://charts.bitnami.com/bitnami
     condition: postgresql.enabled
+
+repositories:
+  - name: bitnami
+    url: https://charts.bitnami.com/bitnami
