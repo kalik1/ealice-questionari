@@ -32,10 +32,10 @@ ENV BE_INSTALL_DIR=$BE_INSTALL_DIR
 WORKDIR     /usr/src/app
 COPY        ./${BE_INSTALL_DIR}/package*.json ./${BE_INSTALL_DIR}/pnpm*.yaml ./
 COPY        --from=development /.pnpm-store /.pnpm-store
-RUN         echo -e "http://nl.alpinelinux.org/alpine/v3.5/main\nhttp://nl.alpinelinux.org/alpine/v3.5/community" > /etc/apk/repositories&& \
+RUN         echo -e "http://nl.alpinelinux.org/alpine/v3.5/main\nhttp://nl.alpinelinux.org/alpine/v3.5/community" > /etc/apk/repositories && \
             apk update && \
             apk --no-cache add curl && \
-            curl -sL https://unpkg.com/@pnpm/self-installer | node && \ 
+            curl -sL https://unpkg.com/@pnpm/self-installer | node && \
             pnpm config set store-dir /.pnpm-store && \
             pnpm install --only=production
 ENV         TZ=Europe/Rome
