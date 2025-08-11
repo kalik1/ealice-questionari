@@ -46,7 +46,10 @@ jobs:
 
       - name: Package Helm Chart
         working-directory: ./helm
-        run: helm package . --dependency-update
+        run: |
+          rm -f Chart.lock
+          ls -la
+          helm package . --dependency-update
         
       - name: Create Helm Repository Index
         working-directory: ./helm
