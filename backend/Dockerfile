@@ -1,38 +1,33 @@
 # -----------------------------------------------
 # Development
 # -----------------------------------------------
-FROM        node:16-alpine AS development
+FROM        registry.access.redhat.com/ubi9/nodejs-20 AS development
 
-    ARG BE_INSTALL_DIR # you could give this a default value as well
-    ENV BE_INSTALL_DIR=$BE_INSTALL_DIR
+ARG         NODE_ENV=development
+ENV         NODE_ENV=${NODE_ENV}
 
-WORKDIR     /usr/src/app
+
 COPY        package*.json ./
-RUN         echo -e "http://nl.alpinelinux.org/alpine/v3.5/main\nhttp://nl.alpinelinux.org/alpine/v3.5/community" > /etc/apk/repositories && \
-            apk --no-cache add curl && \
-            npm ci
+RUN         npm ci
 COPY        ./ .
 RUN         npm run build
+
 
 # -----------------------------------------------
 # Production
 # -----------------------------------------------
 
 
-FROM        node:16-alpine
+FROM        registry.access.redhat.com/ubi9/nodejs-20
 
 ARG         NODE_ENV=production
 ENV         NODE_ENV=${NODE_ENV}
-
-WORKDIR     /usr/src/app
-COPY        package*.json ./
-RUN         echo -e "http://nl.alpinelinux.org/alpine/v3.5/main\nhttp://nl.alpinelinux.org/alpine/v3.5/community" > /etc/apk/repositories && \
-            apk update && \
-            apk --no-cache add curl && \
-            npm ci --omit=dev
 ENV         TZ=Europe/Rome
-RUN         ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-COPY        --from=development /usr/src/app/dist ./dist
+
+COPY        package*.json ./ 
+RUN          npm ci --omit=dev
+
+COPY        --from=development /opt/app-root/src/dist ./dist
 
 EXPOSE 3000
 CMD ["node", "dist/main.js"]
