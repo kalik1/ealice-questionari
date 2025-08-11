@@ -1,0 +1,61 @@
+<div class="flex flex-col flex-auto min-w-0">
+  <div class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 sm:py-8 sm:px-10 border-b bg-card dark:bg-transparent">
+    <div class="flex-1 min-w-0">
+      <div class="flex flex-wrap items-center font-medium">
+        <div><a class="whitespace-nowrap text-primary-500">Proxima</a></div>
+        <div class="flex items-center ml-1 whitespace-nowrap">
+          <mat-icon class="icon-size-5 text-secondary" [svgIcon]="'heroicons_solid:chevron-right'"></mat-icon>
+          <a class="ml-1 text-primary-500">Questionari</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="relative flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between py-8 px-6 md:px-8 border-b">
+    <div class="text-4xl font-extrabold tracking-tight">Questionari</div>
+  </div>
+
+  <div class="flex flex-auto overflow-hidden">
+    <div class="flex flex-col flex-auto sm:mb-18 overflow-hidden sm:overflow-y-auto">
+      <div *ngIf="questionari.length > 0">
+        <ngx-datatable
+          class="material"
+          [rows]="questionari"
+          [loadingIndicator]="loadingIndicator"
+          [columnMode]="columnMode.force"
+          [headerHeight]="50"
+          [footerHeight]="50"
+          style="height: 100%"
+          rowHeight="auto"
+          [reorderable]="reorderable"
+        >
+          <ngx-datatable-column name="Nome" prop="name">
+            <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value">
+              <span title="Double click to edit" (dblclick)="editing[rowIndex + '-name'] = true" *ngIf="!editing[rowIndex + '-name']">{{ value }}</span>
+              <input matInput autofocus (blur)="updateValue($event, 'name', rowIndex)" *ngIf="editing[rowIndex + '-name']" type="text" [value]="value" />
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column name="Questionario" prop="questionnaire">
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              <p>{{ value }}</p>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column name="Descrizione" prop="description">
+            <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value">
+              <span title="Double click to edit" (dblclick)="editing[rowIndex + '-description'] = true" *ngIf="!editing[rowIndex + '-description']">{{ value }}</span>
+              <input matInput autofocus (blur)="updateValue($event, 'description', rowIndex)" *ngIf="editing[rowIndex + '-description']" type="text" [value]="value" />
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column name="Creato" prop="createdAt">
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              <p>{{ value | date: 'dd/MM/yyyy (HH:mm)' }}</p>
+            </ng-template>
+          </ngx-datatable-column>
+        </ngx-datatable>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,132 @@
+<div class="flex flex-col flex-auto min-w-0">
+  <div class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 sm:py-8 sm:px-10 border-b bg-card dark:bg-transparent">
+    <div class="flex-1 min-w-0">
+      <div class="flex flex-wrap items-center font-medium">
+        <div><a class="whitespace-nowrap text-primary-500">Proxima</a></div>
+        <div class="flex items-center ml-1 whitespace-nowrap">
+          <mat-icon class="icon-size-5 text-secondary" [svgIcon]="'heroicons_solid:chevron-right'"></mat-icon>
+          <a class="ml-1 text-primary-500">Crea Questionario</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="p-6 md:p-8">
+    <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-6">
+      <mat-card class="p-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <mat-form-field appearance="fill">
+            <mat-label>Questionario</mat-label>
+            <mat-select formControlName="questionnaire">
+              <mat-option *ngFor="let q of questionnaires" [value]="q">{{ q }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill" class="md:col-span-2">
+            <mat-label>Nome</mat-label>
+            <input matInput formControlName="name" required />
+          </mat-form-field>
+
+          <mat-form-field appearance="fill" class="md:col-span-3">
+            <mat-label>Descrizione</mat-label>
+            <textarea matInput rows="3" formControlName="description" required></textarea>
+          </mat-form-field>
+        </div>
+      </mat-card>
+
+      <mat-card class="p-4">
+        <div class="flex items-center justify-between">
+          <div class="text-xl font-bold">Campi</div>
+          <button mat-stroked-button color="primary" type="button" (click)="addField()">
+            <mat-icon svgIcon="heroicons_outline:plus"></mat-icon>
+            <span class="ml-2">Aggiungi Campo</span>
+          </button>
+        </div>
+
+        <div formArrayName="singleQuestion" class="space-y-4 mt-4">
+          <div *ngFor="let field of fields.controls; let i = index" [formGroupName]="i" class="border p-4 rounded">
+            <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
+              <mat-form-field appearance="fill">
+                <mat-label>Key</mat-label>
+                <input matInput formControlName="key" />
+              </mat-form-field>
+
+              <mat-form-field appearance="fill">
+                <mat-label>Label</mat-label>
+                <input matInput formControlName="label" />
+              </mat-form-field>
+
+              <mat-form-field appearance="fill">
+                <mat-label>Ordine</mat-label>
+                <input matInput type="number" formControlName="order" />
+              </mat-form-field>
+
+              <mat-form-field appearance="fill">
+                <mat-label>Value Type</mat-label>
+                <mat-select formControlName="valueType">
+                  <mat-option *ngFor="let vt of valueTypes" [value]="vt">{{ vt }}</mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field appearance="fill">
+                <mat-label>Control Type</mat-label>
+                <mat-select formControlName="controlType">
+                  <mat-option *ngFor="let ct of controlTypes" [value]="ct">{{ ct }}</mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field appearance="fill">
+                <mat-label>Subtype</mat-label>
+                <mat-select formControlName="type">
+                  <mat-option *ngFor="let st of controlSubTypes" [value]="st">{{ st }}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div class="mt-2">
+              <div class="flex items-center justify-between">
+                <div class="font-semibold">Opzioni</div>
+                <div>
+                  <button mat-icon-button color="primary" type="button" (click)="addOption(i)">
+                    <mat-icon svgIcon="heroicons_outline:plus"></mat-icon>
+                  </button>
+                  <button mat-icon-button color="warn" type="button" (click)="removeField(i)">
+                    <mat-icon svgIcon="heroicons_outline:trash"></mat-icon>
+                  </button>
+                </div>
+              </div>
+              <div formArrayName="options" class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">
+                <div *ngFor="let opt of optionsAt(i).controls; let j = index" [formGroupName]="j" class="border p-2 rounded">
+                  <mat-form-field appearance="fill">
+                    <mat-label>Key</mat-label>
+                    <input matInput formControlName="key" />
+                  </mat-form-field>
+                  <mat-form-field appearance="fill">
+                    <mat-label>Value Type</mat-label>
+                    <mat-select formControlName="valueType">
+                      <mat-option *ngFor="let vt of valueTypes" [value]="vt">{{ vt }}</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  <mat-form-field appearance="fill">
+                    <mat-label>Value</mat-label>
+                    <input matInput formControlName="value" />
+                  </mat-form-field>
+                  <div class="flex justify-end">
+                    <button mat-button color="warn" type="button" (click)="removeOption(i, j)">Rimuovi</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-card>
+
+      <div class="flex justify-end">
+        <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid">
+          <mat-icon svgIcon="heroicons_outline:check"></mat-icon>
+          <span class="ml-2">Salva Questionario</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

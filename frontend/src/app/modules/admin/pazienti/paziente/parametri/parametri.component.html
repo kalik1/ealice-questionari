@@ -1,0 +1,101 @@
+<div class="sm:col-span-2 lg:col-span-1 flex flex-col flex-auto bg-card shadow rounded-2xl overflow-hidden"
+     *ngIf="badgeData.lastFrequenza">
+    <!-- Conversions -->
+    <div class="sm:col-span-2 lg:col-span-1 flex flex-col flex-auto bg-card shadow rounded-2xl overflow-hidden">
+        <div class="flex items-start justify-between m-6 mb-0">
+            <div class="text-lg font-medium tracking-tight leading-6 truncate">Frequenza Cardiaca</div>
+        </div>
+        <div class="flex flex-col lg:flex-row lg:items-center mx-6 mt-3">
+            <div
+                class="text-7xl font-bold tracking-tighter leading-tight">{{badgeData.lastFrequenza | number:'1.0-1'}}
+                <span class="text-3xl font-bold tracking-tighter leading-tight">Bpm</span>
+            </div>
+        </div>
+        <div class="flex flex-col flex-auto h-20" *ngIf="this.frequenzaArray.length > 1">
+            <apx-chart
+                class="flex-auto w-full h-full"
+                [chart]="frequenzaChartView.chart"
+                [colors]="frequenzaChartView.colors"
+                [series]="frequenzaChartView.series"
+                [stroke]="frequenzaChartView.stroke"
+                [tooltip]="frequenzaChartView.tooltip"
+                [xaxis]="frequenzaChartView.xaxis"
+                [yaxis]="frequenzaChartView.yaxis"></apx-chart>
+        </div>
+    </div>
+</div>
+
+<div class="sm:col-span-2 lg:col-span-1 flex flex-col flex-auto bg-card shadow rounded-2xl overflow-hidden"
+     *ngIf="badgeData.lastsaturazione">
+    <div class="flex items-start justify-between m-6 mb-0">
+        <div class="text-lg font-medium tracking-tight leading-6 truncate">SpO2</div>
+    </div>
+    <div class="flex flex-col lg:flex-row lg:items-center mx-6 mt-3">
+        <div
+            class="text-7xl font-bold tracking-tighter leading-tight">{{badgeData.lastsaturazione | number:'1.0-1'}}
+            <span class="text-3xl font-bold tracking-tighter leading-tight">% </span>
+        </div>
+
+    </div>
+    <div class="flex flex-col flex-auto h-20" *ngIf="this.saturazioneArray.length > 1">
+        <apx-chart
+            class="flex-auto w-full h-full"
+            [chart]="saturazioneChartView.chart"
+            [colors]="saturazioneChartView.colors"
+            [series]="saturazioneChartView.series"
+            [stroke]="saturazioneChartView.stroke"
+            [tooltip]="saturazioneChartView.tooltip"
+            [xaxis]="saturazioneChartView.xaxis"
+            [yaxis]="saturazioneChartView.yaxis"></apx-chart>
+    </div>
+</div>
+
+<div class="sm:col-span-2 lg:col-span-1 flex flex-col flex-auto bg-card shadow rounded-2xl overflow-hidden"
+     *ngIf="badgeData.lastPeso">
+    <div class="flex items-start justify-between m-6 mb-0">
+        <div class="text-lg font-medium tracking-tight leading-6 truncate">Peso</div>
+    </div>
+    <div class="flex flex-col lg:flex-row lg:items-center mx-6 mt-3">
+        <div
+            class="text-7xl font-bold tracking-tighter leading-tight">{{badgeData.lastPeso | number:'1.0-1'}}
+            <span class="text-3xl font-bold tracking-tighter leading-tight">Kg</span>
+        </div>
+    </div>
+    <div class="flex flex-col flex-auto h-20" *ngIf="this.pesoArray.length > 1">
+        <apx-chart
+            class="flex-auto w-full h-full"
+            [chart]="pesoChartView.chart"
+            [colors]="pesoChartView.colors"
+            [series]="pesoChartView.series"
+            [stroke]="pesoChartView.stroke"
+            [tooltip]="pesoChartView.tooltip"
+            [xaxis]="pesoChartView.xaxis"
+            [yaxis]="pesoChartView.yaxis"></apx-chart>
+    </div>
+</div>
+
+<div class="sm:col-span-2 lg:col-span-1 flex flex-col flex-auto bg-card shadow rounded-2xl overflow-hidden"
+     *ngIf="badgeData.lastGlicemia">
+    <div class="flex items-start justify-between m-6 mb-0">
+        <div class="text-lg font-medium tracking-tight leading-6 truncate">HbA1c</div>
+    </div>
+    <div class="flex flex-col lg:flex-row lg:items-center mx-6 mt-3">
+        <div
+            class="text-7xl font-bold tracking-tighter leading-tight">{{badgeData.lastGlicemia | number:'1.0-1'}}
+            <span class="text-3xl font-bold tracking-tighter leading-tight">mmol/mol </span>
+        </div>
+    </div>
+    <div class="flex flex-col flex-auto h-20" *ngIf="this.glicemiaArray.length > 1">
+        <apx-chart
+            class="flex-auto w-full h-full"
+            [chart]="glicemiaChartView.chart"
+            [colors]="glicemiaChartView.colors"
+            [series]="glicemiaChartView.series"
+            [stroke]="glicemiaChartView.stroke"
+            [tooltip]="glicemiaChartView.tooltip"
+            [xaxis]="glicemiaChartView.xaxis"
+            [yaxis]="glicemiaChartView.yaxis">
+
+        </apx-chart>
+    </div>
+</div>

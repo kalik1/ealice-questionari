@@ -1,0 +1,60 @@
+
+<div mat-dialog-title class="printable">
+    <h2  class="text-2xl md-0">Risultati Questionario {{data.questionnaire.name}} </h2>
+    <div class="flex flex-col flex-auto min-w-0">
+        <p class="text-md text-secondary tracking-tight">Compilato da <strong>{{data.answer.user?.name}}</strong> il <strong>{{data.answer.createdAt | date: 'dd/MM/yyyy (hh:mm)'}}</strong></p>
+    </div>
+</div>
+
+<mat-dialog-content class="mat-typography printable-bot" style="min-width: 400px">
+
+    <div class="flex flex-col flex-auto min-w-0">
+
+        <!-- Main -->
+        <div class="flex-auto pr-5 pl-5 pb-5">
+
+            <!-- Overview -->
+            <div class="max-w-2xl prose prose-sm">
+                <!--                <h2 class="text-4xl text-primary-500">Questionario {{data.questionnaire.name}}</h2>-->
+                <p class="text-secondary-500">{{data.questionnaire.description}}</p>
+            </div>
+
+            <mat-divider class="mb-6"></mat-divider>
+
+            <div class="max-w-2xl prose prose-sm">
+
+                <ng-container *ngFor="let question of data.questionnaire.singleQuestion | sortBy:'asc':'order'">
+                    <app-question-show [question]="question"
+                                       [answer]="getAnswerFormQuestion(question)">
+                    </app-question-show>
+                </ng-container>
+            </div>
+
+            <div class="max-w-2xl prose prose-sm">
+
+                <ng-container *ngFor="let results of data.questionnaire.results | sortBy:'asc':'order'">
+                    <app-question-show [question]="results"
+                                       [answer]="getResultFormQuestion(results)">
+
+                    </app-question-show>
+                </ng-container>
+            </div>
+
+        </div>
+
+    </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button
+        mat-button
+        (click)="print()"
+        [color]="'accent'">
+        Stampa
+    </button> <button
+        mat-button
+        [color]="'primary'"
+        mat-dialog-close=""
+        cdkFocusInitial>
+        Chiudi
+    </button>
+</mat-dialog-actions>

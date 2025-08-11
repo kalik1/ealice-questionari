@@ -1,0 +1,217 @@
+<div class="flex flex-col flex-auto w-full">
+
+    <div class="flex flex-col flex-wrap w-full max-w-screen-xl mx-auto p-6 md:p-8">
+
+        <!-- Title and action buttons -->
+        <div class="flex grid-cols-2 items-center space-between w-full">
+            <div class="flex-1">
+                <div class="text-3xl font-semibold tracking-tight leading-8">Assistito "{{patient.code}}"
+                    ({{patient.gender  | genere }})
+                </div>
+                <div class="font-medium tracking-tight text-secondary">
+                    Analisi dei risultati
+                </div>
+            </div>
+            <div
+                class="text-xl tracking-tight leading-8 flex-1 text-right hidden print:block">{{now | date:'dd/MM/yy (HH:mm)'}}</div>
+            <div class="flex items-center ml-6 print:hidden">
+
+                <button
+                    class="hidden sm:inline-flex "
+                    (click)="print()"
+                    mat-stroked-button>
+                    <mat-icon
+                        class="icon-size-5"
+                        [svgIcon]="'heroicons_solid:printer'"></mat-icon>
+                    <span class="ml-2">Stampa</span>
+                </button>
+                <!--                                <button-->
+                <!--                                    class="hidden sm:inline-flex ml-3"-->
+                <!--                                    mat-flat-button-->
+                <!--                                    [color]="'primary'">-->
+                <!--                                    <mat-icon-->
+                <!--                                        class="icon-size-5"-->
+                <!--                                        [svgIcon]="'heroicons_solid:save'"></mat-icon>-->
+                <!--                                    <span class="ml-2">Export</span>-->
+                <!--                                </button>-->
+
+                <!--                 Actions menu (visible on xs)-->
+
+                <div class="sm:hidden">
+                    <button
+                        [matMenuTriggerFor]="actionsMenu"
+                        mat-icon-button>
+                        <mat-icon [svgIcon]="'heroicons_outline:dots-vertical'"></mat-icon>
+                    </button>
+                    <mat-menu #actionsMenu="matMenu">
+                        <button mat-menu-item (click)="print()">Stampa</button>
+                        <!--                        <button mat-menu-item>Settings</button>-->
+                    </mat-menu>
+                </div>
+
+            </div>
+        </div>
+
+        <app-parametri *ngIf="answers" [answers]="answers"
+                       class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 w-full mt-3"
+        ></app-parametri>
+
+        <app-sf12 *ngIf="answers" [answers]="answers"
+                  class="flex flex-col flex-auto mt-2 bg-card shadow rounded-2xl overflow-hidden mt-3"></app-sf12>
+
+        <app-sharefi75 *ngIf="answers" [q]="getQuestionnaire('sharefi75')"  [answers]="answers"
+                       class="flex flex-col flex-auto mt-2 bg-card shadow rounded-2xl overflow-hidden mt-3"></app-sharefi75>
+
+        <app-condizioni-generali *ngIf="answers" [q]="getQuestionnaire('ambiente')"  [answers]="answers"
+                       class="flex flex-col flex-auto mt-2 bg-card shadow rounded-2xl overflow-hidden mt-3"></app-condizioni-generali>
+
+        <!--        Tabella Risultati-->
+        <div class="grid grid-cols-1 xl:grid-cols-1 gap-8 w-full mt-8">
+            <!-- Recent transactions table -->
+            <div class="xl:col-span-2 flex flex-col flex-auto bg-card shadow rounded-2xl overflow-hidden">
+                <div class="p-6">
+                    <div class="mr-4 text-lg font-medium tracking-tight leading-6 truncate">Questionari Somministrati
+                    </div>
+                    <!--                    <div class="text-secondary font-medium">1 pending, 4 completed</div>-->
+                </div>
+                <div class="overflow-x-auto mx-6">
+                    <table
+                        class="w-full bg-transparent"
+                        mat-table
+                        matSort
+                        matSortActive="createdAt"
+                        matSortDirection="desc"
+                        [dataSource]="elencoRisposteTableDataSource"
+                        [trackBy]="trackByFn"
+                        #recentTransactionsTable>
+
+                        <!-- Questionario -->
+                        <ng-container matColumnDef="questionario">
+                            <th
+                                mat-header-cell
+                                mat-sort-header
+                                *matHeaderCellDef>
+                                Questionario
+                            </th>
+                            <td
+                                mat-cell
+                                *matCellDef="let transaction">
+                                <span class="pr-6 whitespace-nowrap">
+                                    {{transaction.questionnaire | QName}}
+                                </span>
+                            </td>
+                        </ng-container>
+
+                        <!-- Assistente -->
+                        <ng-container matColumnDef="assistente">
+                            <th
+                                mat-header-cell
+                                mat-sort-header
+                                *matHeaderCellDef>
+                                Assistente
+                            </th>
+                            <td
+                                mat-cell
+                                *matCellDef="let transaction">
+                                <span class="pr-6 font-medium text-sm text-secondary whitespace-nowrap">
+                                    {{transaction.user ? transaction.user.name : 'Paziente' }}
+                                </span>
+                            </td>
+                        </ng-container>
+
+                        <!-- Genere Assistente -->
+<!--                        <ng-container matColumnDef="gender_assistente">-->
+<!--                            <th-->
+<!--                                mat-header-cell-->
+<!--                                mat-sort-header-->
+<!--                                *matHeaderCellDef>-->
+<!--                                Genere Assistente-->
+<!--                            </th>-->
+<!--                            <td-->
+<!--                                mat-cell-->
+<!--                                *matCellDef="let transaction">-->
+<!--                                <span class="pr-6 font-medium text-sm text-secondary whitespace-nowrap">-->
+<!--                                    {{transaction.user ? (transaction.user.gender | genere) : '' }}-->
+<!--                                </span>-->
+<!--                            </td>-->
+<!--                        </ng-container>-->
+
+                        <!-- Data -->
+                        <ng-container matColumnDef="createdAt">
+                            <th
+                                mat-header-cell
+                                mat-sort-header
+                                *matHeaderCellDef>
+                                Data
+                            </th>
+                            <td
+                                mat-cell
+                                *matCellDef="let transaction">
+                                <span class="pr-6 whitespace-nowrap">
+                                    {{transaction.createdAt | date:'MMM dd y (HH:mm)'}}
+                                </span>
+                            </td>
+                        </ng-container>
+
+                        <!-- Visulizza -->
+                        <ng-container matColumnDef="azioni">
+                            <th
+                                mat-header-cell
+                                mat-sort-header
+                                class="pr-0"
+                                *matHeaderCellDef>
+                                Azioni
+                            </th>
+                            <td
+                                mat-cell
+                                *matCellDef="let transaction">
+                                <span class="pr-0 whitespace-nowrap">
+                                    <a href="" (click)="showQ($event, transaction)" class="text-primary-500">
+                                        <strong>Visualizza</strong>
+                                    </a>
+                                    <a href="" (click)="eliminaQ($event, transaction)" class="ml-4 text-red-500">
+                                        <strong>Elimina</strong>
+                                    </a>
+                                </span>
+                            </td>
+                        </ng-container>
+
+                        Footer
+                        <ng-container matColumnDef="recentOrdersTableFooter">
+                            <!--                            <td-->
+                            <!--                                class="py-6 px-0 border-0"-->
+                            <!--                                mat-footer-cell-->
+                            <!--                                *matFooterCellDef-->
+                            <!--                                colspan="6">-->
+                            <!--                                <button mat-stroked-button>See all transactions</button>-->
+                            <!--                            </td>       -->
+                            <td
+                                class="py-6 px-0 border-0"
+                                mat-footer-cell
+                                *matFooterCellDef
+                                colspan="6">
+                                <mat-paginator #paginator [pageSizeOptions]="[5, 10]"
+                                               showFirstLastButtons></mat-paginator>
+                            </td>
+                        </ng-container>
+
+                        <tr
+                            mat-header-row
+                            *matHeaderRowDef="recentTransactionsTableColumns"></tr>
+                        <tr
+                            class="order-row h-16"
+                            mat-row
+                            *matRowDef="let row; columns: recentTransactionsTableColumns;"></tr>
+                        <tr
+                            class="h-16 border-0"
+                            mat-footer-row
+                            *matFooterRowDef="['recentOrdersTableFooter']"></tr>
+                    </table>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>

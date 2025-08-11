@@ -1,0 +1,39 @@
+/*
+move from component level css to style.css
+Here hiding is not required as the same is been displayed on screen
+
+@media screen {
+  #printable {
+      display: none;
+  }
+} */
+
+@media print {
+    body * {
+        visibility:hidden;
+    }
+    .printable, .printable * {
+        visibility:visible;
+
+    }
+    .printable-bot, .printable-bot * {
+        visibility:visible;
+    }
+
+    .mat-dialog-content {
+        max-height: 14000px;
+    }
+
+    .printable {
+        position:absolute;
+        left:0;
+        top:0;
+    }
+
+    .printable-bot {
+        position:absolute;
+        left:0;
+        top: 50px ;
+    }
+
+}

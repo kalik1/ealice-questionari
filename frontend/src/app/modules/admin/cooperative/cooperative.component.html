@@ -1,0 +1,83 @@
+<div class="flex flex-col flex-auto min-w-0">
+  <!-- Header Top Breadcrumbs -->
+  <div class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 sm:py-8 sm:px-10 border-b bg-card dark:bg-transparent">
+    <div class="flex-1 min-w-0">
+      <div class="flex flex-wrap items-center font-medium">
+        <div>
+          <a class="whitespace-nowrap text-primary-500">Proxima</a>
+        </div>
+        <div class="flex items-center ml-1 whitespace-nowrap">
+          <mat-icon class="icon-size-5 text-secondary" [svgIcon]="'heroicons_solid:chevron-right'"></mat-icon>
+          <a class="ml-1 text-primary-500">Cooperative</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header Title & Actions -->
+  <div class="relative flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between py-8 px-6 md:px-8 border-b">
+    <div class="text-4xl font-extrabold tracking-tight">Cooperative</div>
+    <div class="flex shrink-0 items-center mt-6 sm:mt-0 sm:ml-4">
+      <!-- Placeholder for future Add action -->
+      <!-- <button class="ml-4" mat-flat-button [color]="'primary'">
+        <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+        <span class="ml-2 mr-1">Aggiungi</span>
+      </button> -->
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="flex flex-auto overflow-hidden">
+    <div class="flex flex-col flex-auto sm:mb-18 overflow-hidden sm:overflow-y-auto">
+      <div *ngIf="cooperative.length > 0">
+        <ngx-datatable
+          class="material"
+          [rows]="cooperative"
+          [loadingIndicator]="loadingIndicator"
+          [columnMode]="columnMode.force"
+          [headerHeight]="50"
+          [footerHeight]="50"
+          style="height: 100%"
+          rowHeight="auto"
+          [reorderable]="reorderable"
+        >
+          <ngx-datatable-column name="Nome" prop="name">
+            <ng-template let-column="column" ngx-datatable-header-template>
+              {{ column.name }}
+            </ng-template>
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              <p>{{ value }}</p>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column name="Email" prop="email">
+            <ng-template let-column="column" ngx-datatable-header-template>
+              {{ column.name }}
+            </ng-template>
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              <p>{{ value }}</p>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column name="Telefono" prop="phone">
+            <ng-template let-column="column" ngx-datatable-header-template>
+              {{ column.name }}
+            </ng-template>
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              <p>{{ value || '-' }}</p>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column name="Utenti">
+            <ng-template let-column="column" ngx-datatable-header-template>
+              {{ column.name }}
+            </ng-template>
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <p>{{ row.users?.length || 0 }}</p>
+            </ng-template>
+          </ngx-datatable-column>
+        </ngx-datatable>
+      </div>
+    </div>
+  </div>
+</div>

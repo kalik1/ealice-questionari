@@ -1,0 +1,89 @@
+<div [formGroup]="form" class="flex flex-col gt-xs:flex-row">
+    <!--    <label [attr.for]="question.key">{{question.label}}</label>-->
+
+    <div [ngSwitch]="question.controlType">
+
+        <!--        <input *ngSwitchCase="'textbox'" [formControlName]="question.key"-->
+        <!--               [id]="question.key" [type]="question.type">-->
+
+        <mat-form-field
+            *ngSwitchCase="'textbox'"
+            [ngClass]="formFieldHelpers"
+            [id]="question.key"
+            class="flex-auto gt-xs:pr-3 min-w-full"
+        >
+            <mat-label>{{question.label}}</mat-label>
+            <input
+                matInput
+                [formControlName]="question.key"
+                [id]="question.key"
+                [type]="question.type"
+                class="min-w-6"
+                [errorStateMatcher]="errorStateMatcher"
+            >
+            <mat-icon
+                class="icon-size-5"
+                matSuffix
+                [svgIcon]="'heroicons_solid:user-circle'">
+            </mat-icon>
+            <mat-error *ngIf="getErrorMessage(question.key)">{{getErrorMessage(question.key)}} </mat-error>
+        </mat-form-field>
+
+        <mat-form-field
+            *ngSwitchCase="'number'"
+            [ngClass]="formFieldHelpers"
+            [id]="question.key"
+            class="flex-auto gt-xs:pr-3 min-w-full"
+        >
+            <mat-label>{{question.label}}</mat-label>
+            <input
+                matInput
+                [formControlName]="question.key"
+                [id]="question.key"
+                [type]="'number'"
+                [step]="getOption('step')"
+                class="min-w-6"
+                [errorStateMatcher]="errorStateMatcher"
+            >
+            <mat-icon
+                class="icon-size-5"
+                matSuffix
+                [svgIcon]="'heroicons_solid:user-circle'">
+            </mat-icon>
+            <mat-error *ngIf="getErrorMessage(question.key)">{{getErrorMessage(question.key)}} </mat-error>
+        </mat-form-field>
+
+
+        <!--        <select [id]="question.key" *ngSwitchCase="'dropdown'" [formControlName]="question.key">-->
+        <!--            <option *ngFor="let opt of question.options" [value]="opt.key">{{opt.value}}</option>-->
+        <!--        </select>-->
+
+        <mat-form-field
+            *ngSwitchCase="'dropdown'"
+            [ngClass]="formFieldHelpers"
+            [id]="question.key"
+            class="flex-auto min-w-full">
+            <mat-label>{{question.label}}</mat-label>
+            <mat-select
+                [formControlName]="question.key"
+                [errorStateMatcher]="errorStateMatcher"
+            >
+                <mat-option *ngFor="let opt of question.options" [value]="opt.value">{{opt.key}}</mat-option>
+            </mat-select>
+            <mat-hint>{{question.hint}}</mat-hint>
+            <mat-error>{{getErrorMessage(question.key)}}</mat-error>
+
+        </mat-form-field>
+
+
+
+        <div *ngSwitchCase="'divider'">
+            <mat-divider class="mt-6 mb-10" *ngIf="question.type !== 'no-divider'"></mat-divider>
+            <p class="text-lg font-medium" *ngIf="question.label">{{question.label}}</p>
+            <p class="text-secondary mb-6" *ngIf="question.value">
+                {{question.value}}
+            </p>
+        </div>
+    </div>
+
+</div>

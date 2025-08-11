@@ -1,0 +1,263 @@
+<h2 mat-dialog-title>Aggiungi Utente</h2>
+
+<mat-dialog-content class="mat-typography xl:min-w-[600px] sm:min-w-[375px] md:min-w-[450px] min-w-[300px]" >
+
+    <fuse-alert [dismissible]="true"
+                [dismissed]="false"
+                [type]="'error'"
+                class="max-w-full mb-10"
+                *ngIf="alertService.get('questionInsertError') | async">
+
+        <span fuseAlertTitle>Errore nell'inserimento dell'assistente:</span>
+        <p *ngFor="let err of saveErrors">{{err}}</p>
+    </fuse-alert>
+
+    <form [formGroup]="addUserForm" class="flex flex-col pt-10 bg-card rounded overflow-x-hidden">
+        <!--        <p class="text-lg font-medium">Informazioni</p>-->
+<!--        <p class="text-secondary mb-6">-->
+<!--            Informazioni Paziente-->
+<!--        </p>-->
+        <div class="flex">
+            <mat-form-field class="flex-auto">
+                <input
+                    matInput
+                    formControlName="email"
+                    [placeholder]="'Email Address'">
+                <mat-icon
+                    class="icon-size-5"
+                    matPrefix
+                    [svgIcon]="'heroicons_solid:mail'"></mat-icon>
+                <mat-error
+                    *ngIf="getErrorMessage('email')"
+                >{{getErrorMessage('email')}}
+                </mat-error>
+
+            </mat-form-field>
+        </div>
+
+        <div class="flex">
+            <mat-form-field class="flex-auto">
+                <input
+                    matInput
+                    cdkFocusInitial
+                    formControlName="name"
+                    [placeholder]="'Nome'">
+                <mat-icon
+                    class="icon-size-5"
+                    matPrefix
+                    [svgIcon]="'heroicons_solid:mail'"></mat-icon>
+                <mat-error
+                    *ngIf="getErrorMessage('name')"
+                >{{getErrorMessage('name')}}
+                </mat-error>
+
+            </mat-form-field>
+        </div>
+
+        <div class="flex">
+            <mat-form-field class="flex-auto">
+                <input
+                    matInput
+                    type="password"
+                    formControlName="password"
+                    [placeholder]="'Password'">
+                <mat-icon
+                    class="icon-size-5"
+                    matPrefix
+                    [svgIcon]="'heroicons_solid:mail'"></mat-icon>
+                <mat-error
+                    *ngIf="getErrorMessage('password')"
+                >{{getErrorMessage('password')}}
+                </mat-error>
+
+            </mat-form-field>
+        </div>
+
+        <div class="flex">
+            <mat-form-field class="flex-auto">
+                <input
+                    matInput
+                    type="password"
+                    formControlName="passwordConfirm"
+                    [placeholder]="'Conferma Password'">
+                <mat-icon
+                    class="icon-size-5"
+                    matPrefix
+                    [svgIcon]="'heroicons_solid:mail'"></mat-icon>
+                <mat-error
+                    *ngIf="getErrorMessage('passwordConfirm')"
+                >{{getErrorMessage('passwordConfirm')}}
+                </mat-error>
+
+            </mat-form-field>
+        </div>
+
+        <mat-divider class="mt-6 mb-10"></mat-divider>
+
+        <div class="flex flex-col gt-xs:flex-row">
+            <mat-form-field class="flex-auto gt-xs:pr-3">
+                <mat-select [placeholder]="'Genere'" formControlName="gender">
+                    <mat-option value="m">Maschio</mat-option>
+                    <mat-option value="f">Femmina</mat-option>
+                </mat-select>
+                <mat-icon
+                    class="icon-size-5"
+                    matPrefix
+                    [svgIcon]="'heroicons_solid:location-marker'">
+                </mat-icon>
+
+                <mat-error *ngIf="getErrorMessage('sex')">{{getErrorMessage('sex')}}</mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="flex-auto gt-xs:pl-3" >
+                <mat-select [placeholder]="'Anno Di Nascita'" formControlName="yearOfBirth">
+                    <mat-option *ngFor="let year of yearsOfBirthService.getAllYears()" [value]="year">{{year}}</mat-option>
+                </mat-select>
+                <mat-icon
+                    class="icon-size-5"
+                    matPrefix
+                    [svgIcon]="'heroicons_solid:translate'"></mat-icon>
+                <mat-error *ngIf="getErrorMessage('yearOfBirth')">{{getErrorMessage('yearOfBirth')}}</mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="flex-auto gt-xs:pl-3" *ngIf="isAdmin" >
+                <mat-select [placeholder]="'Cooperativa'" formControlName="coop">
+                    <mat-option *ngFor="let coop of coops" [value]="coop.id">{{coop.name}}</mat-option>
+                </mat-select>
+                <mat-icon
+                    class="icon-size-5"
+                    matPrefix
+                    [svgIcon]="'iconsmind:handshake'"></mat-icon>
+                <mat-error *ngIf="getErrorMessage('coop')">{{getErrorMessage('yearOfBirth')}}</mat-error>
+            </mat-form-field>
+
+
+        </div>
+
+        <!--        <mat-divider class="mt-6 mb-10"></mat-divider>-->
+
+        <!--        <p class="text-lg font-medium">Profile</p>-->
+        <!--        <p class="text-secondary mb-6">-->
+        <!--            People here will get to know you with this information-->
+        <!--        </p>-->
+        <!--        <div class="flex flex-col gt-xs:flex-row">-->
+        <!--            <mat-form-field class="flex-auto gt-xs:pr-3">-->
+        <!--                <input-->
+        <!--                    matInput-->
+        <!--                    [placeholder]="'First name'">-->
+        <!--                <mat-icon-->
+        <!--                    class="icon-size-5"-->
+        <!--                    matPrefix-->
+        <!--                    [svgIcon]="'heroicons_solid:user-circle'"></mat-icon>-->
+        <!--            </mat-form-field>-->
+        <!--            <mat-form-field class="flex-auto gt-xs:pl-3">-->
+        <!--                <input-->
+        <!--                    matInput-->
+        <!--                    [placeholder]="'Last name'">-->
+        <!--                <mat-icon-->
+        <!--                    class="icon-size-5"-->
+        <!--                    matPrefix-->
+        <!--                    [svgIcon]="'heroicons_solid:user-circle'"></mat-icon>-->
+        <!--            </mat-form-field>-->
+        <!--        </div>-->
+        <!--        <div class="flex">-->
+        <!--            <mat-form-field class="flex-auto">-->
+        <!--                <input-->
+        <!--                    matInput-->
+        <!--                    [placeholder]="'Username'">-->
+        <!--                <span matPrefix>www.example.com/</span>-->
+        <!--            </mat-form-field>-->
+        <!--        </div>-->
+        <div class="flex">
+            <mat-form-field class="fuse-mat-textarea flex-auto">
+                        <textarea
+                            matInput
+                            [placeholder]="'Note'"
+                            [rows]="3"></textarea>
+                <mat-icon
+                    class="icon-size-5"
+                    matPrefix
+                    [svgIcon]="'heroicons_solid:menu-alt-2'"></mat-icon>
+            </mat-form-field>
+        </div>
+
+        <!--        <mat-divider class="mt-6 mb-10"></mat-divider>-->
+
+        <!--        <p class="text-lg font-medium">Notifications</p>-->
+        <!--        <p class="text-secondary mb-6">-->
+        <!--            We'll always let you know about important changes, but you pick what else you want to hear about.-->
+        <!--        </p>-->
+        <!--        <div class="flex flex-col gt-sm:flex-row">-->
+        <!--            <div class="flex flex-col">-->
+        <!--                <span class="font-semibold mb-2">By Email</span>-->
+        <!--                <div class="flex flex-col">-->
+        <!--                    <mat-checkbox-->
+        <!--                        class="mb-2"-->
+        <!--                        [checked]="true"-->
+        <!--                        [color]="'primary'">-->
+        <!--                        Company News-->
+        <!--                    </mat-checkbox>-->
+        <!--                    <mat-checkbox-->
+        <!--                        class="mb-2"-->
+        <!--                        [color]="'primary'">-->
+        <!--                        Featured Products-->
+        <!--                    </mat-checkbox>-->
+        <!--                    <mat-checkbox-->
+        <!--                        [checked]="true"-->
+        <!--                        [color]="'primary'">-->
+        <!--                        Messages-->
+        <!--                    </mat-checkbox>-->
+        <!--                </div>-->
+        <!--            </div>-->
+        <!--            <div class="flex flex-col mt-8 gt-sm:mt-0 gt-sm:ml-16">-->
+        <!--                <span class="font-semibold mb-2">Push Notifications</span>-->
+        <!--                <mat-radio-group-->
+        <!--                    class="flex flex-col"-->
+        <!--                    [color]="'primary'"-->
+        <!--                    [value]="'just-good'">-->
+        <!--                    <mat-radio-button-->
+        <!--                        class="mb-2"-->
+        <!--                        [value]="'everything'">-->
+        <!--                        Everything-->
+        <!--                    </mat-radio-button>-->
+        <!--                    <mat-radio-button-->
+        <!--                        class="mb-2"-->
+        <!--                        [value]="'just-good'">-->
+        <!--                        Just the good stuff-->
+        <!--                    </mat-radio-button>-->
+        <!--                    <mat-radio-button [value]="'no-push'">-->
+        <!--                        No push notifications-->
+        <!--                    </mat-radio-button>-->
+        <!--                </mat-radio-group>-->
+        <!--            </div>-->
+        <!--        </div>-->
+
+        <!--        <div class="flex items-center justify-end border-t -mx-8 mt-8 px-8 py-5 bg-gray-50 dark:bg-gray-700">-->
+        <!--            <button mat-button>-->
+        <!--                Cancel-->
+        <!--            </button>-->
+        <!--            <button-->
+        <!--                class="px-6 ml-3"-->
+        <!--                mat-flat-button-->
+        <!--                [color]="'primary'">-->
+        <!--                Save-->
+        <!--            </button>-->
+        <!--        </div>-->
+    </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button
+        mat-button
+        [mat-dialog-close]="undefined">
+        Cancel
+    </button>
+    <button
+        mat-button
+        (click)="saveUser()"
+        [disabled]="formHasErrror()"
+        [color]="'primary'">
+        Salva
+    </button>
+
+<!--    {{ fErrror() | json}}-->
+</mat-dialog-actions>

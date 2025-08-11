@@ -1,0 +1,71 @@
+<!-- Risultati SF12 -->
+<div *ngIf="badgeData.lastMCS || badgeData.lastPCS" >
+    <div class="flex items-stretch justify-between m-6 mb-0">
+        <div class="text-lg font-medium tracking-tight leading-6 truncate">Risultati SF12</div>
+    </div>
+    <div class="flex items-start mt-6 mx-6 mb-2">
+        <div class="grid grid-cols-2 ">
+            <div class="flex flex-col">
+                <div class="flex items-center">
+                    <div class="font-medium text-secondary leading-5">Ultimo ICM</div>
+                    <mat-icon
+                        class="ml-1.5 icon-size-4 text-hint"
+                        [svgIcon]="'heroicons_solid:information-circle'"
+                        [matTooltip]="'L’indice componente mentale (o Mental Component Summary, MCS) é un indice che misura lo stato mentale'">
+                    </mat-icon>
+                </div>
+                <div class="flex items-start mt-2">
+                    <div
+                        class="text-4xl font-bold tracking-tight leading-none">{{badgeData.lastMCS | number:'1.0-1'}}</div>
+                    <div class="flex items-center ml-2" *ngIf="badgeData.lastMCSinPct">
+                        <mat-icon
+                            class="icon-size-5"
+                            [ngClass]="(badgeData.lastMCSinPct | number) < 0 ? 'text-red-500' : 'text-green-500'"
+                            [svgIcon]="(badgeData.lastMCSinPct | number) < 0 ? 'heroicons_solid:arrow-circle-down' : 'heroicons_solid:arrow-circle-up'">
+                        </mat-icon>
+                        <div class="ml-1 text-md font-medium"
+                             [ngClass]="(badgeData.lastMCSinPct | number) < 0 ? 'text-red-500' : 'text-green-500'"
+                        >{{badgeData.lastMCSinPct | number:'1.0-1'}}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-col ml-3">
+                <div class="flex items-center">
+                    <div class="font-medium text-secondary leading-5">Ultimo ICF</div>
+                    <mat-icon
+                        class="ml-1.5 icon-size-4 text-hint"
+                        [svgIcon]="'heroicons_solid:information-circle'"
+                        [matTooltip]="'L’indice componente fisico (o Physical Component Summary, PCS) é un indice che riguardo lo stato fisico'"></mat-icon>
+                </div>
+                <div class="flex items-start mt-2">
+                    <div
+                        class="text-4xl font-bold tracking-tight leading-none">{{badgeData.lastPCS | number:'1.0-1'}}</div>
+                    <div class="flex items-center ml-2" *ngIf="badgeData.lastPCSinPct">
+                        <mat-icon
+                            class="icon-size-5"
+                            [ngClass]="(badgeData.lastPCSinPct | number) < 0 ? 'text-red-500' : 'text-green-500'"
+                            [svgIcon]="(badgeData.lastPCSinPct | number) < 0 ? 'heroicons_solid:arrow-circle-down' : 'heroicons_solid:arrow-circle-up'"></mat-icon>
+                        <div class="ml-1 text-md font-medium"
+                             [ngClass]="(badgeData.lastPCSinPct | number) < 0 ? 'text-red-500' : 'text-green-500'">{{badgeData.lastPCSinPct | number:'1.0-1'}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="flex flex-col flex-auto h-auto mt-1 flex-centered" *ngIf="last2AnswersMCS && last2AnswersPCS">
+        <apx-chart
+            class="flex-auto w-full"
+            [chart]="sf12ChartView.chart"
+            [colors]="sf12ChartView.colors"
+            [dataLabels]="sf12ChartView.dataLabels"
+            [grid]="sf12ChartView.grid"
+            [legend]="sf12ChartView.legend"
+            [series]="sf12ChartView.series"
+            [stroke]="sf12ChartView.stroke"
+            [tooltip]="sf12ChartView.tooltip"
+            [xaxis]="sf12ChartView.xaxis"
+            [yaxis]="sf12ChartView.yaxis">
+
+        </apx-chart>
+    </div>
+</div>

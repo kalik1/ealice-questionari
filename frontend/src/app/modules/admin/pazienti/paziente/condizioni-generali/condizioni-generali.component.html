@@ -1,0 +1,60 @@
+<!-- Risultati ambiente -->
+<div *ngIf="lastAmbiente" >
+    <div class="flex items-stretch justify-between m-6 mb-0">
+        <div class="text-lg font-medium tracking-tight leading-6 truncate">
+            Condizioni Generali
+<!--            <div class="text-md text-secondary font-medium tracking-tight">Stato: <strong>{{frailstatus}}</strong><div>-->
+        </div>
+
+    </div>
+    <div class="flex items-start mt-6 mx-6 mb-4">
+        <div class="grid grid-cols-3 ">
+            <div class="flex flex-col" *ngIf="badgeData.lastPuliziaAmbiente">
+                <div class="flex items-center">
+                    <div class="font-medium text-secondary leading-5">Pulizia Ambiente</div>
+                </div>
+                <div class="flex items-start mt-2">
+                    <div
+                        class="text-2xl font-bold tracking-tight leading-none">{{getAnswerOption('q1', badgeData.lastPuliziaAmbiente) }}
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-col ml-3" *ngIf="badgeData.lastPuliziaPersonale">
+                <div class="flex items-center">
+                    <div class="font-medium text-secondary leading-5">Pulizia Personale</div>
+                </div>
+                <div class="flex items-start mt-2">
+                    <div
+                        class="text-2xl font-bold tracking-tight leading-none">{{getAnswerOption('q2', badgeData.lastPuliziaPersonale) }}
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-col  ml-3" *ngIf="badgeData.lastAutosufficienza">
+                <div class="flex items-center">
+                    <div class="font-medium text-secondary leading-5">Autosufficenza</div>
+                </div>
+                <div class="flex items-start mt-2">
+                    <div
+                        class="text-2xl font-bold tracking-tight leading-none">{{getAnswerOption('q1', badgeData.lastAutosufficienza) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="flex flex-col flex-auto h-auto mt-0 flex-centered" *ngIf="lastAmbiente">
+        <apx-chart
+            class="flex-auto w-full"
+            [chart]="ambienteChartView.chart"
+            [colors]="ambienteChartView.colors"
+            [dataLabels]="ambienteChartView.dataLabels"
+            [grid]="ambienteChartView.grid"
+            [legend]="ambienteChartView.legend"
+            [series]="ambienteChartView.series"
+            [stroke]="ambienteChartView.stroke"
+            [tooltip]="ambienteChartView.tooltip"
+            [xaxis]="ambienteChartView.xaxis"
+            [yaxis]="ambienteChartView.yaxis">
+
+        </apx-chart>
+    </div>
+</div>

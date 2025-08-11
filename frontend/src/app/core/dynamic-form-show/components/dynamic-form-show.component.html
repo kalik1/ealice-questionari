@@ -1,0 +1,57 @@
+<div [ngSwitch]="question.controlType">
+    <p
+        *ngSwitchCase="'textbox'"
+        class="flex-auto gt-xs:pr-3 min-w-full"
+    >
+        {{question.label}}
+       <strong *ngIf="answer">
+           {{answer.value}}
+       </strong>
+
+        <mat-icon
+            *ngIf="question.hint"
+            class="ml-1.5 icon-size-4 text-hint"
+            [svgIcon]="'heroicons_solid:information-circle'"
+            [matTooltip]="question.hint">
+        </mat-icon>
+
+    </p>
+
+    <p
+        *ngSwitchCase="'number'"
+        class="flex-auto gt-xs:pr-3 min-w-full"
+    >
+        {{question.label}}
+        <strong *ngIf="answer">
+            {{answer.value?.toFixed(getNumericDigits())}}
+        </strong>
+
+        <mat-icon
+            *ngIf="question.hint"
+            class="ml-1.5 icon-size-4 text-hint print:hidden"
+            [svgIcon]="'heroicons_solid:information-circle'"
+            [matTooltip]="question.hint">
+        </mat-icon>
+
+    </p>
+
+
+    <div *ngSwitchCase="'divider'">
+        <mat-divider class="mt-4 mb-6" *ngIf="question.type !== 'no-divider'"></mat-divider>
+        <p class="text-xl font-medium" *ngIf="question.label">{{question.label}}</p>
+        <p class="text-secondary mb-2" *ngIf="question.value">
+        {{question.value}}
+        </p>
+    </div>
+
+    <p
+        *ngSwitchCase="'dropdown'"
+        class="flex-auto gt-xs:pr-3 min-w-full"
+    >
+        {{question.label}}
+        <strong *ngIf="answer">
+            {{getOptionValue()}}
+        </strong>
+    </p>
+
+</div>

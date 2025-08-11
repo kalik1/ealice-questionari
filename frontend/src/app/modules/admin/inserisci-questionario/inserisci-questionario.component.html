@@ -1,0 +1,142 @@
+<div class="flex flex-col flex-auto min-w-0">
+
+    <!-- Header -->
+    <div
+        class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 sm:py-8 sm:px-10 border-b bg-card dark:bg-transparent">
+        <div class="flex-1 min-w-0">
+            <!-- Breadcrumbs -->
+            <div class="flex flex-wrap items-center font-medium">
+                <div>
+                    <a class="whitespace-nowrap text-primary-500">Proxima</a>
+                </div>
+                <div class="flex items-center ml-1 whitespace-nowrap">
+                    <mat-icon
+                        class="icon-size-5 text-secondary"
+                        [svgIcon]="'heroicons_solid:chevron-right'"></mat-icon>
+                    <a class="ml-1 text-primary-500">Nuovo Questionario</a>
+                </div>
+            </div>
+            <!-- Title -->
+            <div class="mt-2">
+                <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
+                    Compila Questionario
+                </h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main -->
+    <div class="flex-auto p-6 sm:p-10">
+
+        <fuse-alert [type]="'success'" class="max-w-full mb-10"
+                    *ngIf="alertService.get('questionInsertSuccess') | async">
+            <span fuseAlertTitle>Questionario inserito con successo.</span>
+<!--            This is a alert with a 'success' level severity-->
+        </fuse-alert>
+
+        <fuse-alert [dismissible]="true"
+                    [dismissed]="false"
+                    [type]="'error'"
+                    class="max-w-full mb-10"
+                    *ngIf="alertService.get('questionInsertError') | async">
+
+            <span fuseAlertTitle>Errore nell'inserimento del Questionario:</span>
+            <p *ngFor="let err of saveErrors">{{err}}</p>
+        </fuse-alert>
+
+        <div class="max-w-full">
+
+            <div class="prose prose-sm max-w-full">
+                <h2 class="mt-0">Nuovo Inserimento</h2>
+                <!--                <p>-->
+                <!--                    This sectioned form example uses cards to separate the sections of the form. This kind of form layouts are more suitable for <em>Settings</em> or similar pages.-->
+                <!--                </p>-->
+            </div>
+
+            <form [formGroup]="pazienteForm">
+                <div class="flex flex-col mt-8 p-8 pb-5 bg-card rounded shadow overflow-hidden">
+                    <p class="text-lg font-medium">Questionario</p>
+                    <p class="text-secondary">
+                        Seleziona il Modello di Questionario
+                    </p>
+                    <div class="flex flex-col gt-xs:flex-row mt-6 mb-6">
+                        <mat-form-field class="flex-auto gt-xs:pr-3">
+                            <mat-label>Tipologia Questionario</mat-label>
+                            <mat-select
+                                [placeholder]="'Seleziona Un Questionario....'"
+                                formControlName="questionnaire"
+                                        (selectionChange)="setQuestionnarie($event)">
+<!--                                <mat-option [disabled]="true" [value]="undefined">Seleziona Un Questionario....</mat-option>-->
+                                <mat-option *ngFor="let q of questionnaries" [value]="q">{{q.name}}</mat-option>
+                            </mat-select>
+                            <mat-icon
+                                class="icon-size-5"
+                                matPrefix
+                                [svgIcon]="'heroicons_solid:location-marker'"></mat-icon>
+                        </mat-form-field>
+                        <mat-form-field
+                            class="flex-auto gt-xs:pr-3"
+                        >
+                            <mat-label>Codice Assistito</mat-label>
+                            <!--                            <input matInput [type]="'text'" [value]="patientCode" class="min-w-6">-->
+
+                            <mat-icon
+                                class="icon-size-5"
+                                matPrefix
+                                [svgIcon]="'heroicons_solid:user-circle'">
+                            </mat-icon>
+                            <input type="text"
+                                   placeholder="Codice Paziente"
+                                   aria-label="Codice Paziente"
+                                   matInput
+                                   formControlName="paziente"
+                                   [matAutocomplete]="auto">
+                            <mat-autocomplete #auto="matAutocomplete" [displayWith]="codicePazienteDisplay">
+                                <mat-option *ngFor="let patient of filteredPatients | async" [value]="patient">
+                                    {{patient.code}} ({{patient.yearOfBirth}})
+                                </mat-option>
+                            </mat-autocomplete>
+
+                            <mat-error>Errore Codice Assistito</mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </form>
+
+            <div class="prose prose-sm max-w-3xl" *ngIf="formInfo">
+                <h2 class="mt-12">{{formInfo.title}}</h2>
+                <p *ngIf="formInfo.description">{{formInfo.description}}</p>
+            </div>
+
+            <!-- CONTENT GOES HERE -->
+
+            <form (ngSubmit)="onSubmit($event)" [formGroup]="form" *ngIf="form"
+                  class="flex flex-col mt-8 p-8 pb-4 bg-card rounded-2xl shadow overflow-hidden">
+                <div *ngFor="let question of questions | sortBy:'asc':'order'" class="form-row">
+                    <app-question [question]="question" [form]="form"></app-question>
+                </div>
+
+                <div class="flex items-center justify-end border-t -mx-8 mt-8 px-8 py-5 bg-gray-50 dark:bg-gray-700">
+                    <button
+                        type="reset"
+                        (click)="onReset($event)"
+                        mat-button>
+                        Resetta
+                    </button>
+                    <button
+                        class="px-6 ml-3"
+                        mat-flat-button
+                        [disabled]="!form.valid"
+                        type="submit"
+                        [color]="'primary'">
+                        Salva
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
