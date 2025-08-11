@@ -18,7 +18,7 @@ maintainers:
 
 dependencies:
   - name: postgresql
-    version: 13.2.32
+    version: 13.2.35
     repository: https://charts.bitnami.com/bitnami
     condition: postgresql.enabled
 
