@@ -6,7 +6,6 @@ FROM        registry.access.redhat.com/ubi9/nodejs-20 AS development
 ARG         NODE_ENV=development
 ENV         NODE_ENV=${NODE_ENV}
 
-
 COPY        package*.json ./
 RUN         npm ci
 COPY        ./ .

@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Expose, Transform, Type } from 'class-transformer';
-import { IsEnum, IsOptional } from 'class-validator';
+import { Expose, plainToInstance, Transform, Type } from 'class-transformer';
+import { IsEnum, IsOptional, ValidateNested } from 'class-validator';
 import { Questionnaires } from '../../base/enum/questionnaries.enum';
 import { CreateSingleAnswerDto } from './create-single-answer.dto';
 import { CreateSingleResponseDto } from './create-single-response.dto';
@@ -18,8 +18,9 @@ export class CreateAnswerDto {
     type: CreateSingleAnswerDto,
     isArray: true,
   })
-  @Type(() => CreateSingleAnswerDto)
+  //@Type(() => CreateSingleAnswerDto)
   @Expose()
+  @ValidateNested({ each: true })
   answers: CreateSingleAnswerDto[];
 
   @ApiPropertyOptional({
