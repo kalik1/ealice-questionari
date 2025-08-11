@@ -39,11 +39,13 @@ jobs:
 
       - name: Update Helm Dependencies
         working-directory: ./helm
-        run: helm dependency update .
+        run: |
+          helm dependency update .
+          helm dependency build .
 
       - name: Package Helm Chart
         working-directory: ./helm
-        run: helm package .
+        run: helm package . --dependency-update
         
       - name: Create Helm Repository Index
         working-directory: ./helm
@@ -94,7 +96,8 @@ jobs:
           sed -i "s/^version: .*/version: $VERSION/" Chart.yaml
           sed -i "s/^appVersion: .*/appVersion: \"$VERSION\"/" Chart.yaml
           helm dependency update .
-          helm package .
+          helm dependency build .
+          helm package . --dependency-update
           helm repo index . --url https://${{ github.repository_owner }}.github.io/coop-questionari
         env:
           GITHUB_REF_NAME: ${{ github.ref_name }}
