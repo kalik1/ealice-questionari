@@ -39,6 +39,11 @@ jobs:
           helm repo update
           # Build dependencies (downloads to charts/ directory)
           helm dependency build
+          
+          # Debugging: List files to see if charts/ directory is present
+          echo "--- Listing files in helm/ before packaging ---"
+          ls -R
+          
           # Package the chart
           helm package .
           # Create repository index
