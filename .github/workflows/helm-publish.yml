@@ -1,0 +1,113 @@
+name: Publish Helm Chart to GitHub Pages
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'helm/**'
+    tags: [ "*" ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: v3.12.0
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./helm
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Package Helm Chart
+        run: |
+          cd helm
+          helm package .
+          helm repo index . --url https://${{ github.repository_owner }}.github.io/coop-questionari
+
+      - name: Upload Helm Chart to GitHub Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./helm/*.tgz
+          name: helm-charts
+
+      - name: Upload Helm Repository Index
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./helm/index.yaml
+          name: helm-repo-index
+
+      - name: Create Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref_name }}
+          release_name: Release ${{ github.ref_name }}
+          body: |
+            Helm Chart Release ${{ github.ref_name }}
+            
+            ## Installation
+            
+            ```bash
+            helm repo add coop-questionari https://${{ github.repository_owner }}.github.io/coop-questionari
+            helm repo update
+            helm install my-release coop-questionari/coop-questionari
+            ```
+            
+            ## Chart Changes
+            
+            See the [CHANGELOG.md](CHANGELOG.md) for detailed changes.
+          draft: false
+          prerelease: false
+
+      - name: Update Chart Version
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          cd helm
+          # Extract version from tag (remove 'v' prefix if present)
+          VERSION=${GITHUB_REF_NAME#v}
+          # Update Chart.yaml version
+          sed -i "s/^version: .*/version: $VERSION/" Chart.yaml
+          sed -i "s/^appVersion: .*/appVersion: \"$VERSION\"/" Chart.yaml
+          # Package and index again
+          helm package .
+          helm repo index . --url https://${{ github.repository_owner }}.github.io/coop-questionari
+        env:
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+
+      - name: Commit and Push Chart Updates
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add helm/Chart.yaml
+          git add helm/*.tgz
+          git add helm/index.yaml
+          git commit -m "Update Helm chart to version ${{ github.ref_name }}"
+          git push
