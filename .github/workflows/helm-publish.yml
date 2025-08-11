@@ -5,6 +5,7 @@ on:
     branches: [ "main" ]
     paths:
       - 'helm/**'
+      - '.github/workflows/helm-publish.yml'
     tags: [ "*" ]
   workflow_dispatch:
 
