@@ -50,7 +50,8 @@ jspm_packages/
 # Optional REPL history
 .node_repl_history
 # Output of 'npm pack'
-*.tgz
+# Removed to allow Helm to include vendored dependency .tgz files under charts/
+# *.tgz
 # Yarn Integrity file
 .yarn-integrity
 # dotenv environment variables file
@@ -71,4 +72,5 @@ Thumbs.db
 *.temp
 # Helm specific
 requirements.lock
-charts/
+# Removed to allow packaging of vendored dependencies
+# charts/

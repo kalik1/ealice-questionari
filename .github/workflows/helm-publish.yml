@@ -47,7 +47,6 @@ jobs:
       - name: Package Helm Chart
         working-directory: ./helm
         run: |
-          rm -f Chart.lock
           ls -la ./charts
           helm package . --dependency-update
         
