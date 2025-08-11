@@ -43,6 +43,13 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
+      - name: Build Helm Dependencies
+        run: |
+          cd helm
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm repo update
+          helm dependency build
+
       - name: Package Helm Chart
         run: |
           cd helm

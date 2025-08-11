@@ -31,6 +31,13 @@ jobs:
         with:
           version: v3.12.0
 
+      - name: Build Helm Dependencies
+        run: |
+          cd helm
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm repo update
+          helm dependency build
+
       - name: Package Helm Chart
         run: |
           cd helm

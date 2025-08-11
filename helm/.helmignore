@@ -69,6 +69,7 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.temp
-# Helm specific
+# Helm specific - exclude charts directory from final package
+# but allow it during build process
 charts/
 requirements.lock
