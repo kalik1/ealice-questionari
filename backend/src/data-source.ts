@@ -13,6 +13,11 @@ import { QuestionSingleResult } from './questions/entities/question-single-resul
 import { QuestionSingleOption } from './questions/entities/question-single-options.entity';
 import { QuestionSingleResultOption } from './questions/entities/question-single-result-options.entity';
 
+import { connectionSource } from './config/typeorm';
+
+const config = typeormConfig();
+
+
 export const AppDataSource = new DataSource({
   type: 'postgres',
   host: process.env.DB_HOST || 'localhost',
