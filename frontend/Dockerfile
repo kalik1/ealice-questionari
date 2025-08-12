@@ -19,5 +19,5 @@ FROM        nginx:1.21-alpine
 ENV         TZ=Europe/Rome
 RUN         ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 COPY        --from=development /usr/src/app/dist/fuse /usr/share/nginx/html
-COPY        frontent.conf.template /etc/nginx/templates/frontent.conf.template
+COPY        ./frontend.conf.template /etc/nginx/templates/frontend.conf.template
 EXPOSE 8080
