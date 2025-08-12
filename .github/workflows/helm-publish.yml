@@ -52,7 +52,7 @@ jobs:
         
       - name: Create Helm Repository Index
         working-directory: ./helm
-        run: helm repo index . --url https://${{ github.repository_owner }}.github.io/coop-questionari
+        run: helm repo index . --url https://${{ github.repository_owner }}.github.io/ealice-questionari
         
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -80,7 +80,7 @@ jobs:
             ## Installation
             
             ```bash
-            helm repo add coop-questionari https://${{ github.repository_owner }}.github.io/coop-questionari
+            helm repo add coop-questionari https://${{ github.repository_owner }}.github.io/ealice-questionari
             helm repo update
             helm install my-release coop-questionari/coop-questionari
             ```
@@ -101,7 +101,7 @@ jobs:
           helm dependency update .
           helm dependency build .
           helm package . --dependency-update
-          helm repo index . --url https://${{ github.repository_owner }}.github.io/coop-questionari
+          helm repo index . --url https://${{ github.repository_owner }}.github.io/ealice-questionari
         env:
           GITHUB_REF_NAME: ${{ github.ref_name }}
 
