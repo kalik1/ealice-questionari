@@ -6,9 +6,9 @@ metadata:
     {{- include "coop-questionari.labels" . | nindent 4 }}
 data:
   NODE_ENV: {{ .Values.backend.env.NODE_ENV | quote }}
-  DATABASE_HOST: {{ .Values.backend.env.DATABASE_HOST | quote }}
+  DATABASE_HOST: {{ tpl .Values.backend.env.DATABASE_HOST . | quote }}
   DATABASE_PORT: {{ .Values.backend.env.DATABASE_PORT | quote }}
   DATABASE_NAME: {{ .Values.backend.env.DATABASE_NAME | quote }}
   DATABASE_USER: {{ .Values.backend.env.DATABASE_USER | quote }}
   PORT: {{ .Values.backend.env.PORT | quote }}
-  API_URL: {{ .Values.frontend.env.API_URL | quote }}
+  API_URL: {{ tpl .Values.frontend.env.API_URL . | quote }}

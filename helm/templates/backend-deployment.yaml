@@ -43,31 +43,31 @@ spec:
                 configMapKeyRef:
                   name: {{ include "coop-questionari.fullname" . }}-config
                   key: NODE_ENV
-            - name: DATABASE_HOST
+            - name: DB_HOST
               valueFrom:
                 configMapKeyRef:
                   name: {{ include "coop-questionari.fullname" . }}-config
                   key: DATABASE_HOST
-            - name: DATABASE_PORT
+            - name: DB_PORT
               valueFrom:
                 configMapKeyRef:
                   name: {{ include "coop-questionari.fullname" . }}-config
                   key: DATABASE_PORT
-            - name: DATABASE_NAME
+            - name: DB_DATABASE
               valueFrom:
                 configMapKeyRef:
                   name: {{ include "coop-questionari.fullname" . }}-config
                   key: DATABASE_NAME
-            - name: DATABASE_USER
+            - name: DB_USER
               valueFrom:
                 configMapKeyRef:
                   name: {{ include "coop-questionari.fullname" . }}-config
                   key: DATABASE_USER
-            - name: DATABASE_PASSWORD
+            - name: DB_PASS
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "coop-questionari.fullname" . }}-db-secret
-                  key: database-password
+                  name: {{ include "coop-questionari.fullname" . }}-postgresql
+                  key: password
             - name: JWT_SECRET
               valueFrom:
                 secretKeyRef:
@@ -113,11 +113,11 @@ spec:
             - /bin/sh
             - -c
             - |
-              echo "Waiting for PostgreSQL to be ready..."
-              until pg_isready -h $DATABASE_HOST -p $DATABASE_PORT -U $DATABASE_USER; do
-                echo "PostgreSQL is unavailable - sleeping"
-                sleep 2
-              done
+              # echo "Waiting for PostgreSQL to be ready..."
+              # until NODE_PATH=/opt/app-root/src/node_modules node -e 'const { Client } = require("pg"); const client = new Client({ host: process.env.DATABASE_HOST, port: process.env.DATABASE_PORT, user: process.env.DATABASE_USER, password: process.env.DATABASE_PASSWORD, database: process.env.DATABASE_NAME, connectionTimeoutMillis: 5000 }); client.connect().then(() => process.exit(0)).catch((err) => { console.error(err); process.exit(1) })'; do
+                # echo "PostgreSQL is unavailable - sleeping"
+                # sleep 2
+              # done
               echo "PostgreSQL is up - executing migrations"
               npm run migration:run
           env:
@@ -126,31 +126,31 @@ spec:
                 configMapKeyRef:
                   name: {{ include "coop-questionari.fullname" . }}-config
                   key: NODE_ENV
-            - name: DATABASE_HOST
+            - name: DB_HOST
               valueFrom:
                 configMapKeyRef:
                   name: {{ include "coop-questionari.fullname" . }}-config
                   key: DATABASE_HOST
-            - name: DATABASE_PORT
+            - name: DB_PORT
               valueFrom:
                 configMapKeyRef:
                   name: {{ include "coop-questionari.fullname" . }}-config
                   key: DATABASE_PORT
-            - name: DATABASE_NAME
+            - name: DB_DATABASE
               valueFrom:
                 configMapKeyRef:
                   name: {{ include "coop-questionari.fullname" . }}-config
                   key: DATABASE_NAME
-            - name: DATABASE_USER
+            - name: DB_USER
               valueFrom:
                 configMapKeyRef:
                   name: {{ include "coop-questionari.fullname" . }}-config
                   key: DATABASE_USER
-            - name: DATABASE_PASSWORD
+            - name: DB_PASS
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "coop-questionari.fullname" . }}-db-secret
-                  key: database-password
+                  name: {{ include "coop-questionari.fullname" . }}-postgresql
+                  key: password
           resources:
             {{- toYaml .Values.backend.migrations.resources | nindent 12 }}
       {{- end }}
