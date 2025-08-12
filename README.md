@@ -8,14 +8,20 @@ The fastest way to deploy this application is using our Helm chart:
 
 ```bash
 # Add the Helm repository
-helm repo add coop-questionari https://kalik1.github.io/coop-questionari
+helm repo add coop-questionari https://kalik1.github.io/ealice-questionari
 helm repo update
 
+# Oprional: customize values
+# curl -o coop-questionari-values.yaml https://raw.githubusercontent.com/kalik1/ealice-questionari/refs/heads/main/helm/values.yaml
+# vi coop-questionari-values.yaml
+
 # Install the application
-helm install my-release coop-questionari/coop-questionari
+helm upgrade --install -n coop-questionari --create-namespace coop-questionari coop-questionari/coop-questionari # -f coop-questionari-values.yaml
 
 # Access the application
 kubectl port-forward svc/my-release-frontend 8080:80
+
+
 ```
 
 Visit [http://localhost:8080](http://localhost:8080) to access the application.
