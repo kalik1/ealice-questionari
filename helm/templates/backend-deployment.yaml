@@ -80,13 +80,13 @@ spec:
                   key: PORT
           livenessProbe:
             httpGet:
-              path: /health
+              path: /api/health
               port: http
             initialDelaySeconds: 30
             periodSeconds: 10
           readinessProbe:
             httpGet:
-              path: /health
+              path: /api/health
               port: http
             initialDelaySeconds: 5
             periodSeconds: 5
@@ -113,11 +113,11 @@ spec:
             - /bin/sh
             - -c
             - |
-              # echo "Waiting for PostgreSQL to be ready..."
-              # until NODE_PATH=/opt/app-root/src/node_modules node -e 'const { Client } = require("pg"); const client = new Client({ host: process.env.DATABASE_HOST, port: process.env.DATABASE_PORT, user: process.env.DATABASE_USER, password: process.env.DATABASE_PASSWORD, database: process.env.DATABASE_NAME, connectionTimeoutMillis: 5000 }); client.connect().then(() => process.exit(0)).catch((err) => { console.error(err); process.exit(1) })'; do
-                # echo "PostgreSQL is unavailable - sleeping"
-                # sleep 2
-              # done
+              echo "Waiting for PostgreSQL to be ready..."
+              until NODE_PATH=/opt/app-root/src/node_modules node -e 'const { Client } = require("pg"); const client = new Client({ host: process.env.DB_HOST, port: process.env.DB_PORT, user: process.env.DB_USER, password: process.env.DB_PASS, database: process.env.DB_DATABASE, connectionTimeoutMillis: 5000 }); client.connect().then(() => process.exit(0)).catch((err) => { console.error(err); process.exit(1) })'; do
+                echo "PostgreSQL is unavailable - sleeping"
+                sleep 2
+              done
               echo "PostgreSQL is up - executing migrations"
               npm run migration:run
           env:
