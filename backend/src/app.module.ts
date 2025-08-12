@@ -12,17 +12,17 @@ import { AnswerModule } from './answer/answer.module';
 import { QuestionsModule } from './questions/questions.module';
 import typeorm from './config/typeorm';
 
-
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [typeorm]
+      load: [typeorm],
     }),
     AuthModule,
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => (configService.get('typeorm'))
+      useFactory: async (configService: ConfigService) =>
+        configService.get('typeorm'),
     }),
     UserModule,
     CoopModule,
