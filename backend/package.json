@@ -9,6 +9,7 @@
     "prebuild": "rimraf dist",
     "build": "nest build",
     "migration:run": "ts-node ./src/migrations/runner.ts run",
+    "migration:prod:run": "node dist/migrations/runner.js run",
     "migration:revert": "ts-node ./src/migrations/runner.ts revert",
     "migration:generate": "ts-node ./node_modules/.bin/typeorm -d ./src/config/typeorm.ts migration:generate ./src/migrations/a-1723319000000-seed-initial-data.ts",
     "typeorm:win": "ts-node -r tsconfig-paths/register node_modules\\typeorm\\cli.js",

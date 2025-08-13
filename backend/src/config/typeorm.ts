@@ -25,7 +25,7 @@ const config = {
   password: process.env.DB_PASS || 'magical_password',
   // logging: true,
   database: process.env.DB_DATABASE || 'coop_question',
-  migrations: ['../src/migrations/*.migration.{ts,js}'],
+  migrations: ['{src,dist}/migrations/*.migration.{ts,js}'],
   entities: [
     User,
     Coop,

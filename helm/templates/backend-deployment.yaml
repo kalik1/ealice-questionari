@@ -119,7 +119,7 @@ spec:
                 sleep 2
               done
               echo "PostgreSQL is up - executing migrations"
-              npm run migration:run
+              npm run migration:prod:run
           env:
             - name: NODE_ENV
               valueFrom:
