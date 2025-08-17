@@ -1,4 +1,5 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
+import * as bcrypt from 'bcrypt';
 
 export class SeedInitialData1723319000000 implements MigrationInterface {
   name = 'SeedInitialData1723319000000';
@@ -10,6 +11,10 @@ export class SeedInitialData1723319000000 implements MigrationInterface {
     const coopName = process.env.DEFAULT_COOP_NAME || 'Default Cooperative';
     const coopEmail =
       process.env.DEFAULT_COOP_EMAIL || 'default@coop-questionari.com';
+
+    // Hash the admin password with bcrypt
+    const saltRounds = 12;
+    const hashedPassword = await bcrypt.hash(adminPassword, saltRounds);
 
     // Create default coop if missing
     const coop = await queryRunner.query(
@@ -32,7 +37,7 @@ export class SeedInitialData1723319000000 implements MigrationInterface {
       'CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA public',
     );
 
-    // Create admin user if missing (with plaintext default; app is expected to enforce change/login)
+    // Create admin user if missing (with properly hashed password)
     const user = await queryRunner.query(
       'SELECT id FROM public."user" WHERE email = $1',
       [adminEmail],
@@ -40,8 +45,17 @@ export class SeedInitialData1723319000000 implements MigrationInterface {
     if (user.length === 0) {
       await queryRunner.query(
         'INSERT INTO public."user" (email, password, role, "coopId", name, "yearOfBirth", gender) VALUES ($1,$2,$3,$4,$5,$6,$7)',
-        [adminEmail, adminPassword, 'admin', coopId, adminName, 1990, 'm'],
+        [adminEmail, hashedPassword, 'admin', coopId, adminName, 1990, 'm'],
       );
+    } else {
+      // Update existing user's password to be hashed if it's not already
+      const existingUser = user[0];
+      if (existingUser.password === adminPassword) {
+        await queryRunner.query(
+          'UPDATE public."user" SET password = $1 WHERE id = $2',
+          [hashedPassword, existingUser.id],
+        );
+      }
     }
   }
 
