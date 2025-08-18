@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+      args:
+        FE_INSTALL_DIR: ${FE_INSTALL_DIR:-frontend}
+    ports:
+      - "8080:8080"
+    environment:
+      - TZ=Europe/Rome
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod
+      args:
+        BE_INSTALL_DIR: ${BE_INSTALL_DIR:-backend}
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - TZ=Europe/Rome
+    restart: unless-stopped
+    networks:
+      - app-network
+    depends_on:
+      - frontend
+
+networks:
+  app-network:
+    driver: bridge

@@ -1,0 +1,175 @@
+name: Optimized Build and Push Docker Images
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'backend/**'
+      - 'frontend/**'
+    tags: [ "*" ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  # Single build job that runs once and produces artifacts
+  build:
+    name: Build Applications
+    runs-on: ubuntu-latest
+    outputs:
+      frontend-artifacts: ${{ steps.build-frontend.outputs.artifacts }}
+      backend-artifacts: ${{ steps.build-backend.outputs.artifacts }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      # Build Frontend
+      - name: Build Frontend
+        id: build-frontend
+        working-directory: ./frontend
+        run: |
+          npm ci --legacy-peer-deps
+          npm run build
+          echo "artifacts=$(pwd)/dist" >> $GITHUB_OUTPUT
+
+      # Build Backend
+      - name: Build Backend
+        id: build-backend
+        working-directory: ./backend
+        run: |
+          npm ci
+          npm run build
+          echo "artifacts=$(pwd)/dist" >> $GITHUB_OUTPUT
+
+      # Upload build artifacts
+      - name: Upload Frontend Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: ./frontend/dist
+          retention-days: 1
+
+      - name: Upload Backend Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-dist
+          path: ./backend/dist
+          retention-days: 1
+
+  # Frontend assembly job
+  assemble-frontend:
+    name: Assemble Frontend Docker Image
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [linux/amd64, linux/arm64]
+    env:
+      REGISTRY: ghcr.io
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download Frontend Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-dist
+          path: ./frontend/dist
+
+      - name: Derive lowercase owner for GHCR
+        run: echo "OWNER_LC=${GITHUB_REPOSITORY_OWNER,,}" >> $GITHUB_ENV
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract Docker metadata (tags, labels)
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ env.OWNER_LC }}/coop-questionari-frontend
+          tags: |
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
+            type=raw,value=${{ github.ref_name }},enable=${{ startsWith(github.ref, 'refs/tags/') }}
+
+      - name: Build and push Frontend
+        uses: docker/build-push-action@v6
+        with:
+          context: ./frontend
+          file: ./frontend/Dockerfile.prod
+          platforms: ${{ matrix.platform }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # Backend assembly job
+  assemble-backend:
+    name: Assemble Backend Docker Image
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [linux/amd64, linux/arm64]
+    env:
+      REGISTRY: ghcr.io
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download Backend Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: backend-dist
+          path: ./backend/dist
+
+      - name: Derive lowercase owner for GHCR
+        run: echo "OWNER_LC=${GITHUB_REPOSITORY_OWNER,,}" >> $GITHUB_ENV
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract Docker metadata (tags, labels)
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ env.OWNER_LC }}/coop-questionari-backend
+          tags: |
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
+            type=raw,value=${{ github.ref_name }},enable=${{ startsWith(github.ref, 'refs/tags/') }}
+
+      - name: Build and push Backend
+        uses: docker/build-push-action@v6
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile.prod
+          platforms: ${{ matrix.platform }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
