@@ -29,15 +29,33 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-          cache: 'npm'
+
+      - name: Verify Repository Structure
+        run: |
+          echo "Repository root contents:"
+          ls -la
+          echo ""
+          echo "Frontend directory contents:"
+          ls -la frontend/
+          echo ""
+          echo "Backend directory contents:"
+          ls -la backend/
+          echo ""
+          echo "Frontend package.json exists: $(test -f frontend/package.json && echo 'YES' || echo 'NO')"
+          echo "Backend package.json exists: $(test -f backend/package.json && echo 'YES' || echo 'NO')"
 
       # Build Frontend
       - name: Build Frontend
         id: build-frontend
         working-directory: ./frontend
         run: |
-          npm ci --legacy-peer-deps
-          npm run build
+          echo "Current directory: $(pwd)"
+          echo "Directory contents: $(ls -la)"
+          echo "Installing dependencies..."
+          npm ci --legacy-peer-deps || { echo "Frontend dependency installation failed"; exit 1; }
+          echo "Building frontend..."
+          npm run build || { echo "Frontend build failed"; exit 1; }
+          echo "Build completed. Dist contents: $(ls -la dist/)"
           echo "artifacts=$(pwd)/dist" >> $GITHUB_OUTPUT
 
       # Build Backend
@@ -45,8 +63,13 @@ jobs:
         id: build-backend
         working-directory: ./backend
         run: |
-          npm ci
-          npm run build
+          echo "Current directory: $(pwd)"
+          echo "Directory contents: $(ls -la)"
+          echo "Installing dependencies..."
+          npm ci || { echo "Backend dependency installation failed"; exit 1; }
+          echo "Building backend..."
+          npm run build || { echo "Backend build failed"; exit 1; }
+          echo "Build completed. Dist contents: $(ls -la dist/)"
           echo "artifacts=$(pwd)/dist" >> $GITHUB_OUTPUT
 
       # Upload build artifacts
