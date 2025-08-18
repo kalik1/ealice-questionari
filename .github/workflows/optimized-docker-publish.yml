@@ -6,6 +6,7 @@ on:
     paths:
       - 'backend/**'
       - 'frontend/**'
+      - '.github/workflows/optimized-docker-publish.yml'
     tags: [ "*" ]
   workflow_dispatch:
 
@@ -29,6 +30,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: 'frontend/package-lock.json'
 
       - name: Verify Repository Structure
         run: |
@@ -57,6 +60,14 @@ jobs:
           npm run build || { echo "Frontend build failed"; exit 1; }
           echo "Build completed. Dist contents: $(ls -la dist/)"
           echo "artifacts=$(pwd)/dist" >> $GITHUB_OUTPUT
+
+      # Setup Node.js for Backend (with separate cache)
+      - name: Setup Node.js for Backend
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: 'backend/package-lock.json'
 
       # Build Backend
       - name: Build Backend
