@@ -4,4 +4,5 @@ export enum QuestionnariesEnum {
     sharefi75 = 'sharefi75',
     ambiente = 'ambiente',
     parametri = 'parametri',
+    neonati = 'neonati',
 }

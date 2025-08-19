@@ -1,0 +1,125 @@
+<!-- Parametri vitali fondamentali in griglia -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 w-full mt-3">
+    <!-- Frequenza Cardiaca -->
+    <div class="sm:col-span-2 lg:col-span-1 flex flex-col flex-auto bg-card shadow rounded-2xl overflow-hidden"
+         *ngIf="fcArray.length > 0">
+        <div class="flex items-start justify-between m-6 mb-0">
+            <div class="text-lg font-medium tracking-tight leading-6 truncate">Frequenza Cardiaca</div>
+        </div>
+        <div class="flex flex-col lg:flex-row lg:items-center mx-6 mt-3">
+            <div
+                class="text-7xl font-bold tracking-tighter leading-tight">{{fcArray[0]?.fc | number:'1.0-1'}}
+                <span class="text-3xl font-bold tracking-tighter leading-tight">Bpm</span>
+            </div>
+        </div>
+        <div class="flex flex-col flex-auto h-20" *ngIf="fcArray.length > 1">
+            <apx-chart
+                class="flex-auto w-full h-full"
+                [chart]="fcChartView.chart"
+                [colors]="fcChartView.colors"
+                [series]="fcChartView.series"
+                [stroke]="fcChartView.stroke"
+                [tooltip]="fcChartView.tooltip"
+                [xaxis]="fcChartView.xaxis"
+                [yaxis]="fcChartView.yaxis"></apx-chart>
+        </div>
+    </div>
+
+    <!-- Frequenza Respiratoria -->
+    <div class="sm:col-span-2 lg:col-span-1 flex flex-col flex-auto bg-card shadow rounded-2xl overflow-hidden"
+         *ngIf="frArray.length > 0">
+        <div class="flex items-start justify-between m-6 mb-0">
+            <div class="text-lg font-medium tracking-tight leading-6 truncate">Frequenza Respiratoria</div>
+        </div>
+        <div class="flex flex-col lg:flex-row lg:items-center mx-6 mt-3">
+            <div
+                class="text-7xl font-bold tracking-tighter leading-tight">{{frArray[0]?.fr | number:'1.0-1'}}
+                <span class="text-3xl font-bold tracking-tighter leading-tight">atti/min</span>
+            </div>
+        </div>
+        <div class="flex flex-col flex-auto h-20" *ngIf="frArray.length > 1">
+            <apx-chart
+                class="flex-auto w-full h-full"
+                [chart]="frChartView.chart"
+                [colors]="frChartView.colors"
+                [series]="frChartView.series"
+                [stroke]="frChartView.stroke"
+                [tooltip]="frChartView.tooltip"
+                [xaxis]="frChartView.xaxis"
+                [yaxis]="frChartView.yaxis"></apx-chart>
+        </div>
+    </div>
+
+    <!-- SpO2 -->
+    <div class="sm:col-span-2 lg:col-span-1 flex flex-col flex-auto bg-card shadow rounded-2xl overflow-hidden"
+         *ngIf="spo2Array.length > 0">
+        <div class="flex items-start justify-between m-6 mb-0">
+            <div class="text-lg font-medium tracking-tight leading-6 truncate">SpO₂</div>
+        </div>
+        <div class="flex flex-col lg:flex-row lg:items-center mx-6 mt-3">
+            <div
+                class="text-7xl font-bold tracking-tighter leading-tight">{{spo2Array[0]?.spo2 | number:'1.0-1'}}
+                <span class="text-3xl font-bold tracking-tighter leading-tight">%</span>
+            </div>
+        </div>
+        <div class="flex flex-col flex-auto h-20" *ngIf="spo2Array.length > 1">
+            <apx-chart
+                class="flex-auto w-full h-full"
+                [chart]="spo2ChartView.chart"
+                [colors]="spo2ChartView.colors"
+                [series]="spo2ChartView.series"
+                [stroke]="spo2ChartView.stroke"
+                [tooltip]="spo2ChartView.tooltip"
+                [xaxis]="spo2ChartView.xaxis"
+                [yaxis]="spo2ChartView.yaxis"></apx-chart>
+        </div>
+    </div>
+
+    <!-- Temperatura -->
+    <div class="sm:col-span-2 lg:col-span-1 flex flex-col flex-auto bg-card shadow rounded-2xl overflow-hidden"
+         *ngIf="tempArray.length > 0">
+        <div class="flex items-start justify-between m-6 mb-0">
+            <div class="text-lg font-medium tracking-tight leading-6 truncate">Temperatura</div>
+        </div>
+        <div class="flex flex-col lg:flex-row lg:items-center mx-6 mt-3">
+            <div
+                class="text-7xl font-bold tracking-tighter leading-tight">{{tempArray[0]?.temp | number:'1.0-1'}}
+                <span class="text-3xl font-bold tracking-tighter leading-tight">°C</span>
+            </div>
+        </div>
+        <div class="flex flex-col flex-auto h-20" *ngIf="tempArray.length > 1">
+            <apx-chart
+                class="flex-auto w-full h-full"
+                [chart]="tempChartView.chart"
+                [colors]="tempChartView.colors"
+                [series]="tempChartView.series"
+                [stroke]="tempChartView.stroke"
+                [tooltip]="tempChartView.tooltip"
+                [xaxis]="tempChartView.xaxis"
+                [yaxis]="tempChartView.yaxis"></apx-chart>
+        </div>
+    </div>
+</div>
+
+<!-- Dynamic charts for other parameters -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 w-full mt-3" *ngIf="dynamicCharts.length > 0">
+    <div *ngFor="let c of dynamicCharts" class="flex flex-col flex-auto bg-card shadow rounded-2xl overflow-hidden">
+        <div class="p-4">
+            <div class="text-base font-medium tracking-tight leading-6 truncate">{{c.title}}</div>
+        </div>
+        <div class="px-4 pb-4">
+            <apx-chart
+                class="flex-auto w-full"
+                [chart]="c.chart"
+                [series]="c.chart.series"
+                [stroke]="c.chart.stroke"
+                [xaxis]="c.chart.xaxis"
+                [yaxis]="c.chart.yaxis"
+                [dataLabels]="c.chart.dataLabels"
+                [tooltip]="c.chart.tooltip"
+            ></apx-chart>
+        </div>
+    </div>
+</div>
+
+

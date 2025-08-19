@@ -4,4 +4,5 @@ export enum QuestionnariesItaEnum {
     sharefi75 = 'SHARE FI 75+',
     ambiente = 'Condizioni Generali',
     parametri = 'Parametri',
+    neonati = 'Neonati',
 }

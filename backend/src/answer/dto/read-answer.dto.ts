@@ -6,8 +6,7 @@ import { IsEnum } from 'class-validator';
 import { ReadSingleAnswerDto } from './read-single-answer.dto';
 import { ReadSingleResponseDto } from './read-single-response.dto';
 import { ReadSingleTextDto } from './read-single-text.dto';
-import { IdNameDto } from '../../base/dto/idName.dto';
-import { IdNameGenderDto } from "../../base/dto/idNameGender.dto";
+import { IdNameGenderDto } from '../../base/dto/idNameGender.dto';
 
 export class ReadAnswerDto {
   @ApiProperty({

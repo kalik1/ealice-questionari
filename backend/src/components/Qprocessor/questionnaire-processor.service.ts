@@ -5,6 +5,7 @@ import { Questionnaires } from '../../base/enum/questionnaries.enum';
 import { Sf12Processor } from './sf12.processor';
 import { ShareFi75Processor } from './sharefi75.processor';
 import { AmbienteProcessor } from './ambiente.processor';
+import { NeonatiProcessor } from './neonati.processor';
 
 @Injectable()
 export class QuestionnaireProcessorService {
@@ -24,6 +25,10 @@ export class QuestionnaireProcessorService {
       case Questionnaires.ambiente:
         const ambienteProcessor = new AmbienteProcessor(q);
         return ambienteProcessor.processAndValidate();
+
+      case Questionnaires.neonati:
+        const neonatiProcessor = new NeonatiProcessor(q as any);
+        return neonatiProcessor.processAndValidate();
 
       default:
         return Promise.resolve(q);

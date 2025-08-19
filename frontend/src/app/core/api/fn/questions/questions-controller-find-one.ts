@@ -11,7 +11,7 @@ import { RequestBuilder } from '../../request-builder';
 import { ReadQuestionDto } from '../../models/read-question-dto';
 
 export interface QuestionsControllerFindOne$Params {
-  id: (string | 'sf12' | 'ambiente' | 'sharefi75' | 'parametri' | 'generic');
+  id: (string | 'sf12' | 'ambiente' | 'sharefi75' | 'parametri' | 'neonati' | 'generic');
 }
 
 export function questionsControllerFindOne(http: HttpClient, rootUrl: string, params: QuestionsControllerFindOne$Params, context?: HttpContext): Observable<StrictHttpResponse<ReadQuestionDto>> {

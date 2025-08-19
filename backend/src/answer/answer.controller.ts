@@ -47,7 +47,6 @@ export class AnswerController {
   ): Promise<ReadAnswerDto> {
     const patient = await this.patientService.findOne(patientId, coop);
     if (!patient) throw new NotFoundException();
-    console.log(createAnswerDto);
     const answer = await this.answerService.create({
       ...createAnswerDto,
       patient,

@@ -6,6 +6,6 @@ import { CreateSingleQuestionDto } from '../models/create-single-question-dto';
 export interface CreateQuestionDto {
   description: string;
   name: string;
-  questionnaire: 'sf12' | 'ambiente' | 'sharefi75' | 'parametri' | 'generic';
+  questionnaire: 'sf12' | 'ambiente' | 'sharefi75' | 'parametri' | 'neonati' | 'generic';
   singleQuestion: Array<CreateSingleQuestionDto>;
 }

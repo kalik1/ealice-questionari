@@ -6,6 +6,7 @@ import { NgModule, ModuleWithProviders, SkipSelf, Optional } from '@angular/core
 import { HttpClient } from '@angular/common/http';
 import { ApiConfiguration, ApiConfigurationParams } from './api-configuration';
 
+import { AppService } from './services/app.service';
 import { AuthService } from './services/auth.service';
 import { UserService } from './services/user.service';
 import { CoopService } from './services/coop.service';
@@ -21,6 +22,7 @@ import { QuestionsService } from './services/questions.service';
   exports: [],
   declarations: [],
   providers: [
+    AppService,
     AuthService,
     UserService,
     CoopService,

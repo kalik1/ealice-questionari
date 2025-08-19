@@ -3,5 +3,6 @@ export enum Questionnaires {
   ambiente = 'ambiente',
   sharefi75 = 'sharefi75',
   parametri = 'parametri',
+  neonati = 'neonati',
   generic = 'generic',
 }

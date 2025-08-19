@@ -12,7 +12,7 @@ export interface ReadAnswerDto {
   id: string;
   notes?: string;
   patient: string;
-  questionnaire: 'sf12' | 'ambiente' | 'sharefi75' | 'parametri' | 'generic';
+  questionnaire: 'sf12' | 'ambiente' | 'sharefi75' | 'parametri' | 'neonati' | 'generic';
   results?: Array<ReadSingleResponseDto>;
   textResponses: Array<ReadSingleTextDto>;
   user?: IdNameGenderDto;

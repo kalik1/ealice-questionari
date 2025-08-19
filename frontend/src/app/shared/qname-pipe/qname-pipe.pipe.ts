@@ -18,6 +18,8 @@ export class QNamePipe implements PipeTransform {
                 return QuestionnariesItaEnum.ambiente;
             case QuestionnariesEnum.parametri:
                 return QuestionnariesItaEnum.parametri;
+            case QuestionnariesEnum.neonati:
+                return QuestionnariesItaEnum.neonati;
             default:
                 return value;
         }

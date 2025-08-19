@@ -31,6 +31,7 @@ import {Sharefi75Component} from './paziente/sharefi75/sharefi75.component';
 import {Sf12Component} from './paziente/sf12/sf12.component';
 import {CondizioniGeneraliComponent} from './paziente/condizioni-generali/condizioni-generali.component';
 import {ParametriComponent} from './paziente/parametri/parametri.component';
+import { NeonatiComponent } from './paziente/neonati/neonati.component';
 
 @NgModule({
     declarations: [
@@ -41,7 +42,8 @@ import {ParametriComponent} from './paziente/parametri/parametri.component';
         Sharefi75Component,
         CondizioniGeneraliComponent,
         Sf12Component,
-        ParametriComponent
+        ParametriComponent,
+        NeonatiComponent
     ],
     imports: [
         RouterModule.forChild(pazientiRoutes),

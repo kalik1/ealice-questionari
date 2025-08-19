@@ -7,8 +7,9 @@ import { SingleQuestionStringDto } from '../models/single-question-string-dto';
 export interface ReadQuestionDto {
   createdAt?: string;
   description?: string;
+  id: string;
   name: string;
-  questionnaire: 'sf12' | 'ambiente' | 'sharefi75' | 'parametri' | 'generic';
+  questionnaire: 'sf12' | 'ambiente' | 'sharefi75' | 'parametri' | 'neonati' | 'generic';
   results: Array<(SingleQuestionStringDto | SingleQuestionNumberDto)>;
   singleQuestion: Array<(SingleQuestionStringDto | SingleQuestionNumberDto)>;
 }

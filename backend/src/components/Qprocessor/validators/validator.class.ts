@@ -9,6 +9,9 @@ export class QuestionnaireValidator {
       case Questionnaires.sf12:
         const q = new Sf12Validator(questionnaire);
         return q.validate();
+      case Questionnaires.neonati:
+        // no specific validator yet
+        return Promise.resolve(true as any);
       default:
         throw new BadRequestException(
           `Invalid Questionnaire type ${questionnaire.questionnaire}`,

@@ -1,7 +1,6 @@
 import { registerAs } from '@nestjs/config';
 import { config as dotenvConfig } from 'dotenv';
 import { DataSource, DataSourceOptions } from 'typeorm';
-import { Config } from '../config';
 import { User } from '../user/entities/user.entity';
 import { Coop } from '../coop/entities/coop.entity';
 import { Patient } from '../patient/entities/patient.entity';
@@ -26,6 +25,7 @@ const config = {
   // logging: true,
   database: process.env.DB_DATABASE || 'coop_question',
   migrations: ['{src,dist}/migrations/*.migration.{ts,js}'],
+  //migrations: ['src/migrations/*.migration.ts'],
   entities: [
     User,
     Coop,
@@ -41,7 +41,7 @@ const config = {
     QuestionSingleResultOption,
   ],
   // entities: [`${Config.getFolderForDb()}/**/*.entity{.ts,.js}`],
-  synchronize: process.env.SYNC_DB === 'true' || Config.isDev(),
+  // synchronize: process.env.SYNC_DB === 'true' || Config.isDev(),
 };
 
 export default registerAs('typeorm', () => config);

@@ -65,6 +65,9 @@
         <app-condizioni-generali *ngIf="answers" [q]="getQuestionnaire('ambiente')"  [answers]="answers"
                        class="flex flex-col flex-auto mt-2 bg-card shadow rounded-2xl overflow-hidden mt-3"></app-condizioni-generali>
 
+        <app-neonati *ngIf="answers" [q]="getQuestionnaire('neonati')" [answers]="answers"
+                      class="flex flex-col flex-auto mt-2"></app-neonati>
+
         <!--        Tabella Risultati-->
         <div class="grid grid-cols-1 xl:grid-cols-1 gap-8 w-full mt-8">
             <!-- Recent transactions table -->
