@@ -19,6 +19,7 @@ export class UserRoleSetGuard implements CanActivate {
     if (!body.role) {
       return true;
     }
+    console.log(user.role);
     if (user.role === UserRoles.admin) {
       return true;
     } else if (user.role === UserRoles.coop_admin) {

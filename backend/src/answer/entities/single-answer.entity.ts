@@ -5,5 +5,5 @@ import { SingleEntity } from './single.entity';
 @Entity()
 export class SingleAnswer extends SingleEntity {
   @Column('float', { nullable: true })
-  value: number;
+  value: number | null;
 }

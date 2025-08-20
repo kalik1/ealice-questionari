@@ -4,6 +4,6 @@ import { SingleEntity } from './single.entity';
 
 @Entity()
 export class SingleResult extends SingleEntity {
-  @Column('float')
-  value: number;
+  @Column('float', { nullable: true })
+  value: number | null;
 }

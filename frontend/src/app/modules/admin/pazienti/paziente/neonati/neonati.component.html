@@ -1,3 +1,27 @@
+<!-- Global time range selector -->
+<div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full mt-3">
+    <div class="flex items-center gap-2">
+        <label class="text-sm font-medium">Da</label>
+        <input type="datetime-local" class="mat-input-element mat-form-field-infix px-3 py-2 rounded border"
+               [value]="rangeFromInput"
+               (change)="onRangeInputChange('from', $event.target.value)" />
+    </div>
+    <div class="flex items-center gap-2">
+        <label class="text-sm font-medium">A</label>
+        <input type="datetime-local" class="mat-input-element mat-form-field-infix px-3 py-2 rounded border"
+               [value]="rangeToInput"
+               (change)="onRangeInputChange('to', $event.target.value)" />
+    </div>
+    <div class="flex flex-wrap gap-2 ml-auto">
+        <button class="px-3 py-2 bg-primary text-on-primary rounded" (click)="setQuickRange('12h')">12 ore</button>
+        <button class="px-3 py-2 bg-primary text-on-primary rounded" (click)="setQuickRange('1d')">1 giorno</button>
+        <button class="px-3 py-2 bg-primary text-on-primary rounded" (click)="setQuickRange('3d')">3 giorni</button>
+        <button class="px-3 py-2 bg-primary text-on-primary rounded" (click)="setQuickRange('7d')">7 giorni</button>
+        <button class="px-3 py-2 bg-primary text-on-primary rounded" (click)="setQuickRange('14d')">14 giorni</button>
+        <button class="px-3 py-2 bg-primary text-on-primary rounded" (click)="setQuickRange('1m')">1 mese</button>
+    </div>
+</div>
+
 <!-- Parametri vitali fondamentali in griglia -->
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 w-full mt-3">
     <!-- Frequenza Cardiaca -->
@@ -120,10 +144,7 @@
             ></apx-chart>
         </div>
     </div>
-</div>
 
-<!-- Categorical timelines (string dropdown/text) -->
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 w-full mt-3" *ngIf="categoricalCharts.length > 0">
     <div *ngFor="let c of categoricalCharts" class="flex flex-col flex-auto bg-card shadow rounded-2xl overflow-hidden">
         <div class="p-4">
             <div class="text-base font-medium tracking-tight leading-6 truncate">{{c.title}}</div>
@@ -141,6 +162,12 @@
             ></apx-chart>
         </div>
     </div>
+
 </div>
+
+<!-- Categorical timelines (string dropdown/text)
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 w-full mt-3" *ngIf="categoricalCharts.length > 0">
+
+</div> -->
 
 

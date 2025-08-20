@@ -1,6 +1,6 @@
 import { SingleQuestionDto } from './read-single-question.dto';
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose, Type } from 'class-transformer';
+import { Expose, Transform, Type } from 'class-transformer';
 import { QuestionValueTypeEnum } from './question-value-type.enum';
 
 export class SingleQuestionStringDto extends SingleQuestionDto {
@@ -15,5 +15,6 @@ export class SingleQuestionStringDto extends SingleQuestionDto {
     enum: [QuestionValueTypeEnum.string],
   })
   @Expose()
+  @Transform(() => QuestionValueTypeEnum.string)
   valueType: QuestionValueTypeEnum.string;
 }

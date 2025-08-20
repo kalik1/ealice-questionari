@@ -16,8 +16,8 @@ INSERT INTO public."question_single" (id, value, "valueType", key, label, requir
 
 -- Pressione arteriosa non invasiva (sistolica/diastolica)
 INSERT INTO public."question_single" (id, value, "valueType", key, label, required, "order", hint, "controlType", type, "questionId") VALUES
-('c1111111-1111-4111-8111-111111111305', NULL, 'number', 'pa_sys', 'Pressione arteriosa sistolica (PA sys) [mmHg]', false, 5, NULL, 'number', '30|120|1', 'c1111111-1111-4111-8111-111111111111'),
-('c1111111-1111-4111-8111-111111111306', NULL, 'number', 'pa_dia', 'Pressione arteriosa diastolica (PA dia) [mmHg]', false, 6, NULL, 'number', '15|90|1', 'c1111111-1111-4111-8111-111111111111');
+('c1111111-1111-4111-8111-111111111305', NULL, 'number', 'pa_sys', 'Pressione arteriosa sistolica (PA sys) [mmHg]', false, 5, NULL, 'number', '30|300|1', 'c1111111-1111-4111-8111-111111111111'),
+('c1111111-1111-4111-8111-111111111306', NULL, 'number', 'pa_dia', 'Pressione arteriosa diastolica (PA dia) [mmHg]', false, 6, NULL, 'number', '15|250|1', 'c1111111-1111-4111-8111-111111111111');
 
 -- Ventilation parameters
 INSERT INTO public."question_single" (id, value, "valueType", key, label, required, "order", hint, "controlType", type, "questionId") VALUES
@@ -85,16 +85,12 @@ INSERT INTO public."question_single" (id, value, "valueType", key, label, requir
 ('c1111111-1111-4111-8111-111111111905', NULL, 'string', 'latte_fortificato', 'Fortificato', false, 84, NULL, 'dropdown', NULL, 'c1111111-1111-4111-8111-111111111111'),
 ('c1111111-1111-4111-8111-111111111906', NULL, 'string', 'note_fortificazione', 'Note sulla fortificazione', false, 85, NULL, 'textbox', 'text', 'c1111111-1111-4111-8111-111111111111');
 
-
-
 -- Termoculla
 INSERT INTO public."question_single" (id, value, "valueType", key, label, required, "order", hint, "controlType", type, "questionId") VALUES
 ('c1111111-1111-4111-8111-111111112001', 'Termoculla', 'string', '\\N', 'Termoculla', false, 90, NULL, 'divider', 'no-divider', 'c1111111-1111-4111-8111-111111111111'),
 ('c1111111-1111-4111-8111-111111112002', NULL, 'string', 'termoculla', 'Termoculla', false, 91, NULL, 'dropdown', NULL, 'c1111111-1111-4111-8111-111111111111'),
 ('c1111111-1111-4111-8111-111111112003', NULL, 'number', 'termoculla_temp', 'Temperatura termoculla [°C]', false, 92, NULL, 'number', '20|40|0.1', 'c1111111-1111-4111-8111-111111111111'),
 ('c1111111-1111-4111-8111-111111112004', NULL, 'number', 'termoculla_umidita', 'Umidità termoculla [%]', false, 93, NULL, 'number', '0|100|1', 'c1111111-1111-4111-8111-111111111111');
-
-
 
 -- Accessi
 INSERT INTO public."question_single" (id, value, "valueType", key, label, required, "order", hint, "controlType", type, "questionId") VALUES
@@ -103,8 +99,6 @@ INSERT INTO public."question_single" (id, value, "valueType", key, label, requir
 ('c1111111-1111-4111-8111-111111112103', NULL, 'string', 'note_cvo_cao', 'Note catetere ombelicale', false, 102, NULL, 'textbox', 'text', 'c1111111-1111-4111-8111-111111111111'),
 ('c1111111-1111-4111-8111-111111112104', NULL, 'string', 'accesso_periferico', 'Accesso periferico', false, 103, NULL, 'dropdown', NULL, 'c1111111-1111-4111-8111-111111111111'),
 ('c1111111-1111-4111-8111-111111112105', NULL, 'string', 'note_accesso_periferico', 'Note accesso periferico', false, 104, NULL, 'textbox', 'text', 'c1111111-1111-4111-8111-111111111111');
-
-
 
 -- Note generali
 INSERT INTO public."question_single" (id, value, "valueType", key, label, required, "order", hint, "controlType", type, "questionId") VALUES
@@ -118,39 +112,39 @@ INSERT INTO public."question_single_result" (id, value, "valueType", key, label,
 -- Opzioni per tutte le select (inserite dopo tutte le domande per rispettare le foreign key)
 INSERT INTO public."question_single_option" (id, value, "valueType", key, "singleQuestionId") VALUES
 -- Opzioni per Tipologia di respiro
-('c1111111-1111-4111-8111-111111112600', NULL, 'string', 'nullo', 'c1111111-1111-4111-8111-111111111601'),
-('c1111111-1111-4111-8111-111111112601', 'spontaneo', 'string', 'Spontaneo', 'c1111111-1111-4111-8111-111111111601'),
-('c1111111-1111-4111-8111-111111112602', 'supportato', 'string', 'Supportato', 'c1111111-1111-4111-8111-111111111601'),
-('c1111111-1111-4111-8111-111111112603', 'ventilato', 'string', 'Ventilato', 'c1111111-1111-4111-8111-111111111601'),
+('c1111111-1111-4111-8111-111111112600', NULL, 'number', '', 'c1111111-1111-4111-8111-111111111601'),
+('c1111111-1111-4111-8111-111111112601', '0', 'number', 'Spontaneo', 'c1111111-1111-4111-8111-111111111601'),
+('c1111111-1111-4111-8111-111111112602', '1', 'number', 'Supportato', 'c1111111-1111-4111-8111-111111111601'),
+('c1111111-1111-4111-8111-111111112603', '2', 'number', 'Ventilato', 'c1111111-1111-4111-8111-111111111601'),
 
 -- Opzioni per Evacuazione
-('c1111111-1111-4111-8111-111111112604', NULL, 'string', 'nullo', 'c1111111-1111-4111-8111-111111111702'),
-('c1111111-1111-4111-8111-111111112605', '0', 'string', 'No', 'c1111111-1111-4111-8111-111111111702'),
-('c1111111-1111-4111-8111-111111112606', '1', 'string', 'Si', 'c1111111-1111-4111-8111-111111111702'),
+('c1111111-1111-4111-8111-111111112604', NULL, 'number', '', 'c1111111-1111-4111-8111-111111111702'),
+('c1111111-1111-4111-8111-111111112605', '0', 'number', 'No', 'c1111111-1111-4111-8111-111111111702'),
+('c1111111-1111-4111-8111-111111112606', '1', 'number', 'Si', 'c1111111-1111-4111-8111-111111111702'),
 
 -- Opzioni per Tipo latte
-('c1111111-1111-4111-8111-111111112900', NULL, 'string', 'nullo', 'c1111111-1111-4111-8111-111111111904'),
-('c1111111-1111-4111-8111-111111112901', 'materno', 'string', 'Latte materno', 'c1111111-1111-4111-8111-111111111904'),
-('c1111111-1111-4111-8111-111111112902', 'artificiale', 'string', 'Latte artificiale', 'c1111111-1111-4111-8111-111111111904'),
+('c1111111-1111-4111-8111-111111112900', NULL, 'number', '', 'c1111111-1111-4111-8111-111111111904'),
+('c1111111-1111-4111-8111-111111112901', '0', 'number', 'Latte materno', 'c1111111-1111-4111-8111-111111111904'),
+('c1111111-1111-4111-8111-111111112902', '1', 'number', 'Latte artificiale', 'c1111111-1111-4111-8111-111111111904'),
 
 -- Opzioni per Fortificato
-('c1111111-1111-4111-8111-111111112903', NULL, 'string', 'nullo', 'c1111111-1111-4111-8111-111111111905'),
-('c1111111-1111-4111-8111-111111112904', '0', 'string', 'No', 'c1111111-1111-4111-8111-111111111905'),
-('c1111111-1111-4111-8111-111111112905', '1', 'string', 'Si', 'c1111111-1111-4111-8111-111111111905'),
+('c1111111-1111-4111-8111-111111112903', NULL, 'number', '', 'c1111111-1111-4111-8111-111111111905'),
+('c1111111-1111-4111-8111-111111112904', '0', 'number', 'No', 'c1111111-1111-4111-8111-111111111905'),
+('c1111111-1111-4111-8111-111111112905', '1', 'number', 'Si', 'c1111111-1111-4111-8111-111111111905'),
 
 -- Opzioni per Termoculla
-('c1111111-1111-4111-8111-111111112906', NULL, 'string', 'nullo', 'c1111111-1111-4111-8111-111111112002'),
-('c1111111-1111-4111-8111-111111112907', '0', 'string', 'No', 'c1111111-1111-4111-8111-111111112002'),
-('c1111111-1111-4111-8111-111111112908', '1', 'string', 'Si', 'c1111111-1111-4111-8111-111111112002'),
+('c1111111-1111-4111-8111-111111112906', NULL, 'number', '', 'c1111111-1111-4111-8111-111111112002'),
+('c1111111-1111-4111-8111-111111112907', '0', 'number', 'No', 'c1111111-1111-4111-8111-111111112002'),
+('c1111111-1111-4111-8111-111111112908', '1', 'number', 'Si', 'c1111111-1111-4111-8111-111111112002'),
 
 -- Opzioni per CVO/CAO
-('c1111111-1111-4111-8111-111111112909', NULL, 'string', 'nullo', 'c1111111-1111-4111-8111-111111112102'),
-('c1111111-1111-4111-8111-111111112910', '0', 'string', 'No', 'c1111111-1111-4111-8111-111111112102'),
-('c1111111-1111-4111-8111-111111112911', '1', 'string', 'Si', 'c1111111-1111-4111-8111-111111112102'),
+('c1111111-1111-4111-8111-111111112909', NULL, 'number', '', 'c1111111-1111-4111-8111-111111112102'),
+('c1111111-1111-4111-8111-111111112910', '0', 'number', 'No', 'c1111111-1111-4111-8111-111111112102'),
+('c1111111-1111-4111-8111-111111112911', '1', 'number', 'Si', 'c1111111-1111-4111-8111-111111112102'),
 
 -- Opzioni per Accesso periferico
-('c1111111-1111-4111-8111-111111112912', NULL, 'string', 'nullo', 'c1111111-1111-4111-8111-111111112104'),
-('c1111111-1111-4111-8111-111111112913', '0', 'string', 'No', 'c1111111-1111-4111-8111-111111112104'),
-('c1111111-1111-4111-8111-111111112914', '1', 'string', 'Si', 'c1111111-1111-4111-8111-111111112104');
+('c1111111-1111-4111-8111-111111112912', NULL, 'number', '', 'c1111111-1111-4111-8111-111111112104'),
+('c1111111-1111-4111-8111-111111112913', '0', 'number', 'No', 'c1111111-1111-4111-8111-111111112104'),
+('c1111111-1111-4111-8111-111111112914', '1', 'number', 'Si', 'c1111111-1111-4111-8111-111111112104');
 
 

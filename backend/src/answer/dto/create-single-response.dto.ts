@@ -6,8 +6,9 @@ import { Expose } from 'class-transformer';
 export class CreateSingleResponseDto extends CreateSingleDto {
   @ApiProperty({
     type: 'number',
+    nullable: true,
   })
-  @IsNumber()
+  @IsNumber({ allowNaN: true })
   @Expose()
-  value: number;
+  value: number | null;
 }

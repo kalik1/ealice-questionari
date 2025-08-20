@@ -29,7 +29,7 @@ export class CoopController {
 
   @Post()
   @isAdmin()
-  @UseGuards(UserRoleSetGuard)
+  // @UseGuards(UserRoleSetGuard)
   @ApiResponse({ type: ReadCoopDto, status: HttpStatus.CREATED })
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() createCoopDto: CreateCoopDto): Promise<ReadCoopDto> {

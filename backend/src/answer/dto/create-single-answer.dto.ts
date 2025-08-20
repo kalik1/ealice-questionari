@@ -6,11 +6,12 @@ import { Expose, Transform, Type } from 'class-transformer';
 export class CreateSingleAnswerDto extends CreateSingleDto {
   @ApiProperty({
     type: 'number',
+    nullable: true,
   })
   @Transform(({ value }) =>
     value === '' || Number.isNaN(value) ? null : Number(value),
   )
   @IsNumber({ allowNaN: true })
   @Expose()
-  value: number;
+  value: number | null;
 }

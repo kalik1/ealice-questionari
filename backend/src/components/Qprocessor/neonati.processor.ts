@@ -5,25 +5,46 @@ import { Patient } from '../../patient/entities/patient.entity';
 
 export class NeonatiProcessor implements QuestionnaireProcessor {
   a: CreateAnswerDto & { patient: Patient };
+  private deps?: {
+    fetchLatestValueByKey?: (key: string) => Promise<number | null>;
+  };
 
-  constructor(a: CreateAnswerDto & { patient: Patient }) {
+  constructor(
+    a: CreateAnswerDto & { patient: Patient },
+    deps?: { fetchLatestValueByKey?: (key: string) => Promise<number | null> },
+  ) {
     if (!a.patient)
       throw new BadRequestException('Missing Patient in Neonati Processor!');
     this.a = a;
     this.a.results = this.a.results ?? [];
+    this.deps = deps;
   }
 
-  private getNum(key: string): number | null {
+  private async getNum(key: string): Promise<number | null> {
     const v = this.a.answers.find((ans) => ans.key === key)?.value as
       | number
       | undefined;
-    return typeof v === 'number' && !Number.isNaN(v) ? v : null;
+    const local = typeof v === 'number' && !Number.isNaN(v) ? v : null;
+    if (local != null) return local;
+
+    // Fallback to latest stored value for specific keys if available
+    if (this.deps?.fetchLatestValueByKey && key === 'peso_neonato') {
+      try {
+        const fetched = await this.deps.fetchLatestValueByKey(key);
+        return typeof fetched === 'number' && !Number.isNaN(fetched)
+          ? fetched
+          : null;
+      } catch {
+        return null;
+      }
+    }
+    return null;
   }
 
   async process(): Promise<CreateAnswerDto> {
     // Derived: SpO2/FiO2 ratio (if FiO2 is fraction like 0.21..1)
-    const spo2 = this.getNum('spo2');
-    const fio2 = this.getNum('fio2');
+    const spo2 = await this.getNum('spo2');
+    const fio2 = await this.getNum('fio2');
     if (spo2 != null && fio2 != null && fio2 > 0) {
       this.a.results.push({
         key: 'spo2_fio2_ratio',
@@ -32,9 +53,10 @@ export class NeonatiProcessor implements QuestionnaireProcessor {
     }
 
     // Derived: Diuresi oraria stimata (ml/kg/h) if available
-    const pesoPannolinoG = this.getNum('peso_pannolino'); // grams ~ ml
-    const pesoNeonatoKg = this.getNum('peso_neonato');
-    const oreTrascorse = this.getNum('ore_trascorse');
+    const pesoPannolinoG = await this.getNum('peso_pannolino'); // grams ~ ml
+    const pesoNeonatoKg = await this.getNum('peso_neonato');
+    const oreTrascorse = await this.getNum('ore_trascorse');
+
     if (
       pesoPannolinoG != null &&
       pesoNeonatoKg != null &&

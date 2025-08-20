@@ -8,6 +8,7 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
+    "migration:show": "ts-node -r tsconfig-paths/register node_modules\\typeorm\\cli.js -d ./src/config/typeorm.ts migration:show",
     "migration:run": "ts-node ./src/migrations/runner.ts run",
     "migration:prod:run": "node dist/migrations/runner.js run",
     "migration:revert": "ts-node ./src/migrations/runner.ts revert",

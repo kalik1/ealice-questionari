@@ -24,9 +24,8 @@ export class AnswerService {
       user?: User;
     },
   ): Promise<Answer> {
-    const newProcessedAnswerDto = await this.processService.processQuestionnary(
-      createAnswerDto,
-    );
+    const newProcessedAnswerDto =
+      await this.processService.processQuestionnary(createAnswerDto);
     const newAnswer = this.answersRepository.create(newProcessedAnswerDto);
     const answer = await this.answersRepository.save(newAnswer);
     return this.findOne(
@@ -50,7 +49,7 @@ export class AnswerService {
   ): Promise<Answer | undefined> {
     return this.answersRepository.findOne({
       where: { id },
-      ...AnswerService.getBaseQ(coop, patient)
+      ...AnswerService.getBaseQ(coop, patient),
     });
   }
 

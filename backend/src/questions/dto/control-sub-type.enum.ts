@@ -20,7 +20,9 @@ export enum ControlSubTypeEnum {
   time = 'time',
   url = 'url',
   week = 'week',
-
-  divider = 'dropdown',
-  'no-divider' = 'no-divider'
+  divider = 'divider',
+  'no-divider' = 'no-divider',
+  dropdown = 'dropdown',
+  string = 'string',
+  textbox = 'textbox',
 }
