@@ -73,13 +73,7 @@ export class NavigationService {
                 icon: 'heroicons_outline:users',
                 link: '/assistenti'
             },
-            {
-                id: 'admin-utenti',
-                title: 'Crea Utente',
-                type: 'basic',
-                icon: 'heroicons_outline:user-add',
-                link: '/admin-utenti'
-            },
+
             ...this._genericMenuPost
         ],
         coop_admin: [

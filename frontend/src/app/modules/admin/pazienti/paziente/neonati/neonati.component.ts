@@ -27,6 +27,8 @@ export class NeonatiComponent implements OnInit, OnChanges {
 
     // Dynamic charts for other parameters
     dynamicCharts: { title: string; chart: ApexOptions }[] = [];
+    // Categorical (string) timelines for dropdown/text responses
+    categoricalCharts: { title: string; chart: ApexOptions }[] = [];
 
     ngOnInit(): void {
         this.buildCharts();
@@ -111,6 +113,9 @@ export class NeonatiComponent implements OnInit, OnChanges {
 
         // Build dynamic charts for other numeric parameters
         this.buildDynamicCharts(neonatiAnswers);
+
+        // Build categorical timelines for string dropdowns/text responses
+        this.buildCategoricalCharts(neonatiAnswers);
     }
 
     private buildDynamicCharts(neonatiAnswers: ReadAnswerDto[]): void {
@@ -123,16 +128,16 @@ export class NeonatiComponent implements OnInit, OnChanges {
             this.q?.results?.find(r => (r as any).key === key)?.label || key;
 
         // Collect numeric keys from answers (include all numeric keys, we'll filter values later)
-        neonatiAnswers.forEach(a => a.answers.forEach(as => {
+        neonatiAnswers.forEach(a => a.answers.forEach((as) => {
             if (typeof as.value === 'number' && !excludeKeys.has(as.key)) {
-                if (!numericKeys.has(as.key)) numericKeys.set(as.key, labelOf(as.key));
+                if (!numericKeys.has(as.key)) {numericKeys.set(as.key, labelOf(as.key));}
             }
         }));
 
         // Include numeric results too
-        neonatiAnswers.forEach(a => (a.results || []).forEach(rs => {
+        neonatiAnswers.forEach(a => (a.results || []).forEach((rs) => {
             if (typeof rs.value === 'number' && !excludeKeys.has(rs.key)) {
-                if (!numericKeys.has(rs.key)) numericKeys.set(rs.key, labelOf(rs.key));
+                if (!numericKeys.has(rs.key)) {numericKeys.set(rs.key, labelOf(rs.key));}
             }
         }));
 
@@ -161,7 +166,7 @@ export class NeonatiComponent implements OnInit, OnChanges {
                         y: p.v
                     }))
                 }];
-                console.log(`Chart data for ${key}:`, chartData);
+                //console.log(`Chart data for ${key}:`, chartData);
 
                 this.dynamicCharts.push({
                     title: label,
@@ -169,6 +174,160 @@ export class NeonatiComponent implements OnInit, OnChanges {
                 });
             }
         });
+    }
+
+    private buildCategoricalCharts(neonatiAnswers: ReadAnswerDto[]): void {
+        // Identify string-type keys from questionnaire definition
+        const stringKeys = new Map<string, { label: string }>();
+
+        const labelOf = (key: string): string =>
+            this.q?.singleQuestion?.find(sq => (sq as any).key === key)?.label ||
+            this.q?.results?.find(r => (r as any).key === key)?.label || key;
+
+        (this.q?.singleQuestion || []).forEach((sq: any) => {
+            if (sq?.valueType === 'string' && (sq?.controlType === 'dropdown')) {
+                console.log('stringKeys', sq.key, sq, labelOf(sq.key));
+                stringKeys.set(sq.key, { label: labelOf(sq.key) });
+            }
+        });
+
+        // Build charts per key from textResponses
+        this.categoricalCharts = [];
+        stringKeys.forEach((meta, key) => {
+            // Collect values over time from textResponses
+            const timeline = neonatiAnswers
+                .filter(a => (a.answers || []).some(tr => tr.key === key))
+                .map(a => ({ createdAt: a.createdAt, v: (a.answers || []).find(tr => tr.key === key)?.value }))
+                .filter(p => !!p.v);
+
+            if (timeline.length === 0) {return;}
+
+            // Sort timeline by date
+            timeline.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+
+            // Create timeline data for rangeBar chart
+            const timelineData: any[] = [];
+            let currentValue = timeline[0]?.v;
+            let startDate = new Date(timeline[0]?.createdAt);
+            let endDate = startDate;
+
+            for (let i = 1; i < timeline.length; i++) {
+                const currentEntry = timeline[i];
+                const currentDate = new Date(currentEntry.createdAt);
+
+                if (currentEntry.v === currentValue) {
+                    // Same value, extend the range
+                    endDate = currentDate;
+                } else {
+                    // Value changed, add the previous range and start new one
+                    if (currentValue && startDate && endDate) {
+                        timelineData.push({
+                            x: String(currentValue),
+                            y: [startDate.getTime(), endDate.getTime()],
+                            fillColor: this.getColorForValue(String(currentValue))
+                        });
+                    }
+                    currentValue = currentEntry.v;
+                    startDate = currentDate;
+                    endDate = currentDate;
+                }
+            }
+
+            // Add the last range
+            if (currentValue && startDate && endDate) {
+                timelineData.push({
+                    x: String(currentValue),
+                    y: [startDate.getTime(), endDate.getTime()],
+                    fillColor: this.getColorForValue(String(currentValue))
+                });
+            }
+
+            if (timelineData.length === 0) {
+                return;
+            }
+
+            const chart: ApexOptions = {
+                chart: {
+                    animations: { enabled: false },
+                    fontFamily: 'inherit',
+                    foreColor: 'inherit',
+                    height: 200,
+                    type: 'rangeBar' as const
+                },
+                series: [{
+                    data: timelineData
+                }],
+                plotOptions: {
+                    bar: {
+                        horizontal: true,
+                        distributed: true,
+                        dataLabels: {
+                            hideOverflowingLabels: false
+                        }
+                    }
+                },
+                dataLabels: {
+                    enabled: true,
+                    formatter: (val: any, opts: any) => {
+                        const label = opts.w.globals.labels[opts.dataPointIndex];
+                        const a = new Date(val[0]);
+                        const b = new Date(val[1]);
+                        const diff = Math.ceil((b.getTime() - a.getTime()) / (1000 * 60 * 60 * 24));
+                        return label + ': ' + diff + (diff > 1 ? ' giorni' : ' giorno');
+                    },
+                    style: {
+                        colors: ['#f3f4f5', '#fff']
+                    }
+                },
+                xaxis: {
+                    type: 'datetime'
+                },
+                yaxis: {
+                    show: false
+                },
+                tooltip: {
+                    followCursor: true,
+                    theme: 'dark'
+                },
+                grid: {
+                    row: {
+                        colors: ['#f3f4f5', '#fff'],
+                        opacity: 1
+                    }
+                }
+            };
+
+            console.log('categoricalCharts', meta.label, chart);
+            this.categoricalCharts.push({ title: meta.label, chart });
+        });
+    }
+
+    private getColorForValue(value: string): string {
+        // Consistent color mapping for string values
+        const colorMap: { [key: string]: string } = {
+            si: '#10b981',
+            no: '#ef4444',
+            sì: '#10b981',
+            bene: '#10b981',
+            male: '#ef4444',
+            normale: '#3b82f6',
+            anormale: '#f59e0b',
+            buono: '#10b981',
+            cattivo: '#ef4444',
+            alto: '#f59e0b',
+            basso: '#3b82f6',
+            medio: '#8b5cf6'
+        };
+
+        // If no specific mapping, generate a consistent color based on string hash
+        if (colorMap[value.toLowerCase()]) {
+            return colorMap[value.toLowerCase()];
+        }
+
+        // Generate consistent color for unknown values
+        const hash = value.split('').reduce((a, b) => a + b.charCodeAt(0), 0);
+        const hue = Math.abs(hash) % 360;
+        return `hsl(${hue}, 70%, 60%)`;
     }
 
     private clearCharts(): void {
@@ -187,7 +346,7 @@ export class NeonatiComponent implements OnInit, OnChanges {
      * Prepare the chart data from the data (same style as parametri component)
      */
     private _prepareChartData(data: ApexAxisChartSeries): ApexOptions {
-        console.log('_prepareChartData input:', data);
+        //console.log('_prepareChartData input:', data);
         const result: ApexOptions = {
             chart: {
                 animations: {
@@ -224,7 +383,7 @@ export class NeonatiComponent implements OnInit, OnChanges {
                 }
             }
         };
-        console.log('_prepareChartData result:', result);
+        //console.log('_prepareChartData result:', result);
         return result;
     }
 }

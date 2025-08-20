@@ -1,4 +1,5 @@
 export enum RoleItaEnum {
     user = 'Utente',
-    coopAdmin = 'Amministratore',
+    coopAdmin = 'Amministratore Cooperative',
+    admin = 'Amministratore Sistema',
 }

@@ -33,10 +33,10 @@ export class AddUtenteDialogComponent implements OnInit {
         private readonly _localUserService: LocalUserService,
         public readonly yearsOfBirthService: YearsOfBirthService,
         public alertService: AlertService,
-        @Inject(MAT_DIALOG_DATA) private data: { coop: IdNameDto | undefined },
+        @Inject(MAT_DIALOG_DATA) private data: { coop: IdNameDto | undefined, isAdmin: boolean },
         readonly dialogRef: MatDialogRef<AddUtenteDialogComponent, ReadUserDto>
     ) {
-        if (data.coop) {
+        if (data.coop && !data.isAdmin) {
             this.coops = [data.coop];
             this.addUserForm.get('coop').setValue(data.coop);
         }
@@ -45,17 +45,21 @@ export class AddUtenteDialogComponent implements OnInit {
         this.addUserForm.addControl('passwordConfirm', new FormControl('', Validators.required));
         this.addUserForm.get('gender').setValue('m');
         this.addUserForm.get('yearOfBirth').setValue(1950);
+        this.addUserForm.get('role').setValue('user');
         this.addUserForm.validator = FuseValidators.mustMatch('password', 'passwordConfirm');
     }
 
     ngOnInit(): void {
-        this._localUserService.hasRole('admin').pipe(
-            filter(isAdmin => isAdmin === true),
-            tap(isAdmin => this.isAdmin = isAdmin),
-            switchMap(() => this._coopService.coopControllerFindAll()),
-            map(coops => coops.map(coop => ({name: coop.name, id: coop.id}))),
-            tap(coops => this.coops = coops)
-        ).subscribe();
+        // Se è admin, carica tutte le cooperative per la selezione
+        if (this.data.isAdmin) {
+            this.isAdmin = true;
+            this._coopService.coopControllerFindAll().pipe(
+                map(coops => coops.map(coop => ({name: coop.name, id: coop.id}))),
+                tap(coops => this.coops = coops)
+            ).subscribe();
+        } else {
+            this.isAdmin = false;
+        }
     }
 
     getErrorMessage(controlName: string): string {

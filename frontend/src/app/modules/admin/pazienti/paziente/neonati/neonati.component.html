@@ -122,4 +122,25 @@
     </div>
 </div>
 
+<!-- Categorical timelines (string dropdown/text) -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 w-full mt-3" *ngIf="categoricalCharts.length > 0">
+    <div *ngFor="let c of categoricalCharts" class="flex flex-col flex-auto bg-card shadow rounded-2xl overflow-hidden">
+        <div class="p-4">
+            <div class="text-base font-medium tracking-tight leading-6 truncate">{{c.title}}</div>
+        </div>
+        <div class="px-4 pb-4">
+            <apx-chart
+                class="flex-auto w-full"
+                [chart]="c.chart"
+                [series]="c.chart.series"
+                [xaxis]="c.chart.xaxis"
+                [yaxis]="c.chart.yaxis"
+                [tooltip]="c.chart.tooltip"
+                [legend]="c.chart.legend"
+                [markers]="c.chart.markers"
+            ></apx-chart>
+        </div>
+    </div>
+</div>
+
 

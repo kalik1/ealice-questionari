@@ -31,13 +31,14 @@ export class InserisciQuestionarioComponent implements OnInit {
     formInfo: IQuestionnarieInfo;
     // payLoad = '';
     questions: QuestionBase[] = [];
-    private questionMetaByKey: Record<string, any> = {};
+
     patientCode: string = '';
     patients: ReadPatientDto[] = [];
     saveErrors: string[] = [];
     filteredPatients: Observable<ReadPatientDto[]> = of([]);
 
     questionnaries: ReadQuestionDto[];
+    private questionMetaByKey: Record<string, any> = {};
 
     /**
      * Constructor
@@ -116,14 +117,21 @@ export class InserisciQuestionarioComponent implements OnInit {
 
         const answerKeys = Object.keys(rawAnswers).filter(f => f !== 'notes');
         const answers = answerKeys
-            .filter(k => {
+            .filter((k) => {
                 const meta = this.questionMetaByKey[k];
                 return !(meta && meta.controlType === 'textbox' && meta.type === 'text');
             })
-            .map(key => ({ key, value: Number(rawAnswers[key]) }));
+            .map((key) => {
+                const value = rawAnswers[key];
+                // Se il valore è undefined, null, stringa vuota o NaN, invia null
+                if (value === undefined || value === null || value === '' || Number.isNaN(Number(value))) {
+                    return { key, value: null };
+                }
+                return { key, value: Number(value) };
+            });
 
         const textResponses = answerKeys
-            .filter(k => {
+            .filter((k) => {
                 const meta = this.questionMetaByKey[k];
                 return meta && meta.controlType === 'textbox' && meta.type === 'text';
             })

@@ -14,6 +14,8 @@ export class RolePipe implements PipeTransform {
                 return RoleItaEnum.coopAdmin;
             case RoleEnum.user:
                 return RoleItaEnum.user;
+            case RoleEnum.admin:
+                return RoleItaEnum.admin;
             default:
                 return 'Ruolo sconosciuto';
         }

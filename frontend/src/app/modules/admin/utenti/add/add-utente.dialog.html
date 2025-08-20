@@ -128,7 +128,20 @@
                     class="icon-size-5"
                     matPrefix
                     [svgIcon]="'iconsmind:handshake'"></mat-icon>
-                <mat-error *ngIf="getErrorMessage('coop')">{{getErrorMessage('yearOfBirth')}}</mat-error>
+                <mat-error *ngIf="getErrorMessage('coop')">{{getErrorMessage('coop')}}</mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="flex-auto gt-xs:pl-3" *ngIf="isAdmin" >
+                <mat-select [placeholder]="'Ruolo'" formControlName="role">
+                    <mat-option value="user">Utente</mat-option>
+                    <mat-option value="coop_admin">Amministratore Cooperativa</mat-option>
+                    <mat-option value="admin">Amministratore Sistema</mat-option>
+                </mat-select>
+                <mat-icon
+                    class="icon-size-5"
+                    matPrefix
+                    [svgIcon]="'heroicons_solid:user-circle'"></mat-icon>
+                <mat-error *ngIf="getErrorMessage('role')">{{getErrorMessage('role')}}</mat-error>
             </mat-form-field>
 
 

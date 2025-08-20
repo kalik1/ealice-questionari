@@ -103,10 +103,7 @@ export const appRoutes: Route[] = [
                 path: 'questionari',
                 loadChildren: () => import('app/modules/admin/questionari/questionari.module').then(m => m.QuestionariModule)
             },
-            {
-                path: 'admin-utenti',
-                loadChildren: () => import('app/modules/admin/utenti-admin/utenti-admin.module').then(m => m.UtentiAdminModule)
-            },
+
             {
                 path: 'assistiti',
                 loadChildren: () => import('app/modules/admin/pazienti/pazienti.module').then(m => m.PazientiModule)

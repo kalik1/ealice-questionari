@@ -22,6 +22,8 @@ export class UtentiComponent implements OnInit {
     reorderable = true;
     utenti: ReadUserDto[] = [];
     user: ReadUserDto;
+    isAdmin: boolean = false;
+    isCoopAdmin: boolean = false;
 
     generes: ['m', 'f'];
     editing = {};
@@ -36,6 +38,13 @@ export class UtentiComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        this._localUserService.hasRole('admin').pipe(
+            tap(isAdmin => this.isAdmin = isAdmin)
+        ).subscribe();
+
+        this._localUserService.hasRole('coop_admin').pipe(
+            tap(isCoopAdmin => this.isCoopAdmin = isCoopAdmin)
+        ).subscribe();
 
         this._utentiService.userControllerFindAll().pipe(
             tap(p => this.utenti = p)
@@ -46,9 +55,52 @@ export class UtentiComponent implements OnInit {
         ).subscribe();
     }
 
+    /**
+     * Verifica se un utente può essere modificato dall'utente corrente
+     */
+    canEditUser(targetUser: ReadUserDto): boolean {
+        // Se sono admin, posso modificare tutti
+        if (this.isAdmin) {
+            return true;
+        }
+
+        // Se sono coop_admin, non posso modificare admin
+        if (this.isCoopAdmin && targetUser.role === 'admin') {
+            return false;
+        }
+
+        // Se sono coop_admin, posso modificare solo utenti della mia cooperativa
+        if (this.isCoopAdmin) {
+            return targetUser.coop?.id === this.user.coop?.id;
+        }
+
+        // Se sono user normale, non posso modificare nessuno
+        return false;
+    }
+
     updateValue<T extends 'name' | 'yearOfBirth' | 'gender' | 'role'>(event: Event, cell: T, rowIndex: number): void {
-        // console.log('inline editing rowIndex', rowIndex);
-        const {value} = event.target as unknown as  {value: ReadUserDto[T]};
+        const targetUser = this.utenti[rowIndex];
+
+        // Verifica se l'utente corrente può modificare l'utente target
+        if (!this.canEditUser(targetUser)) {
+            console.warn('Tentativo di modificare un utente non autorizzato');
+            this.editing[rowIndex + '-' + cell] = false;
+            return;
+        }
+
+        let value: ReadUserDto[T];
+
+        if (cell === 'name') {
+            // Per i campi di input, estraiamo il valore dall'evento
+            const target = event.target as HTMLInputElement;
+            value = target.value as ReadUserDto[T];
+            // Aggiorniamo il modello
+            this.utenti[rowIndex][cell] = value;
+        } else {
+            // Per le select, il valore è già aggiornato nel modello grazie a ngModel
+            value = this.utenti[rowIndex][cell];
+        }
+
         this._utentiService.userControllerUpdate({id: this.utenti[rowIndex].id, body: {
                 [cell]: value
             }}).pipe(
@@ -57,29 +109,33 @@ export class UtentiComponent implements OnInit {
                     return of([]);
                 })
         ).subscribe((user) => {
-            this.utenti[rowIndex][cell] = value;
             this.utenti = [...this.utenti];
             this.editing[rowIndex + '-' + cell] = false;
         });
-
-        // console.log('UPDATED!', this.utenti[rowIndex][cell]);
     }
 
     addUtente(): void {
         const dialogRef = this.dialog.open<AddUtenteDialogComponent, any, ReadUserDto>(AddUtenteDialogComponent, {
             data: {
-                coop: this.user.coop
+                coop: this.user.coop,
+                isAdmin: this.isAdmin
             }
         });
 
         dialogRef.afterClosed().pipe(
-            // switchMap(result => this._utentiService.userControllerCreate({body: result})),
             tap(newUser => newUser ? this.utenti = [...this.utenti, newUser] : [...this.utenti])
         ).subscribe();
     }
 
     eliminaEutente(user: ReadUserDto, event: MouseEvent): void {
         event.preventDefault();
+
+        // Verifica se l'utente corrente può eliminare l'utente target
+        if (!this.canEditUser(user)) {
+            console.warn('Tentativo di eliminare un utente non autorizzato');
+            return;
+        }
+
         const dialogRef = this._fuseConfirmationService.open({
             title      : 'Elimina Utente',
             message    : `Sicuro di voler eliminare l'utente ${user.name}? <br> <span class="font-medium">ATTENZIONE: Questa azione non può essere annullata!</span>`,
