@@ -40,7 +40,6 @@ export class QuestionnaireProcessorService {
   async processQuestionnary(
     q: CreateAnswerDto & { patient: Patient },
   ): Promise<CreateAnswerDto> {
-    console.log(q.questionnaire);
     switch (q.questionnaire) {
       case Questionnaires.sf12:
         const sf12Processor = new Sf12Processor(q);

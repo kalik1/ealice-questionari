@@ -1,24 +1,53 @@
 <!-- Global time range selector -->
-<div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full mt-3">
-    <div class="flex items-center gap-2">
-        <label class="text-sm font-medium">Da</label>
-        <input type="datetime-local" class="mat-input-element mat-form-field-infix px-3 py-2 rounded border"
-               [value]="rangeFromInput"
-               (change)="onRangeInputChange('from', $event.target.value)" />
+<div class="flex flex-col flex-auto bg-card shadow rounded-2xl overflow-hidden w-full mt-3" *ngIf="hasNeonatiAnswers">
+    <div class="flex items-center justify-between m-6 mb-0">
+        <div>
+            <div class="text-lg font-medium tracking-tight leading-6">Neonati</div>
+        </div>
     </div>
-    <div class="flex items-center gap-2">
-        <label class="text-sm font-medium">A</label>
-        <input type="datetime-local" class="mat-input-element mat-form-field-infix px-3 py-2 rounded border"
-               [value]="rangeToInput"
-               (change)="onRangeInputChange('to', $event.target.value)" />
-    </div>
-    <div class="flex flex-wrap gap-2 ml-auto">
-        <button class="px-3 py-2 bg-primary text-on-primary rounded" (click)="setQuickRange('12h')">12 ore</button>
-        <button class="px-3 py-2 bg-primary text-on-primary rounded" (click)="setQuickRange('1d')">1 giorno</button>
-        <button class="px-3 py-2 bg-primary text-on-primary rounded" (click)="setQuickRange('3d')">3 giorni</button>
-        <button class="px-3 py-2 bg-primary text-on-primary rounded" (click)="setQuickRange('7d')">7 giorni</button>
-        <button class="px-3 py-2 bg-primary text-on-primary rounded" (click)="setQuickRange('14d')">14 giorni</button>
-        <button class="px-3 py-2 bg-primary text-on-primary rounded" (click)="setQuickRange('1m')">1 mese</button>
+    <div class="m-6">
+        <div class="flex flex-col sm:flex-row sm:items-end gap-6 w-full">
+            <div class="flex flex-col gap-1">
+                <label class="text-xs font-medium text-secondary">Da</label>
+                <input type="datetime-local"
+                       class="mat-input-element mat-form-field-infix w-56 px-3 py-2 rounded-lg border bg-transparent focus:outline-none focus:ring-2 focus:ring-primary"
+                       [value]="rangeFromInput"
+                       (change)="onRangeInputChange('from', $event.target.value)" />
+            </div>
+            <div class="flex flex-col gap-1">
+                <label class="text-xs font-medium text-secondary">A</label>
+                <input type="datetime-local"
+                       class="mat-input-element mat-form-field-infix w-56 px-3 py-2 rounded-lg border bg-transparent focus:outline-none focus:ring-2 focus:ring-primary"
+                       [value]="rangeToInput"
+                       (change)="onRangeInputChange('to', $event.target.value)" />
+            </div>
+            <div class="flex flex-wrap gap-2 ml-auto neonati-range-buttons">
+                <button class="px-3 py-2 rounded border"
+                        [class.bg-primary]="currentPreset === '12h'"
+                        [class.text-on-primary]="currentPreset === '12h'"
+                        (click)="setQuickRange('12h')">12 ore</button>
+                <button class="px-3 py-2 rounded border"
+                        [class.bg-primary]="currentPreset === '1d'"
+                        [class.text-on-primary]="currentPreset === '1d'"
+                        (click)="setQuickRange('1d')">1 giorno</button>
+                <button class="px-3 py-2 rounded border"
+                        [class.bg-primary]="currentPreset === '3d'"
+                        [class.text-on-primary]="currentPreset === '3d'"
+                        (click)="setQuickRange('3d')">3 giorni</button>
+                <button class="px-3 py-2 rounded border"
+                        [class.bg-primary]="currentPreset === '7d'"
+                        [class.text-on-primary]="currentPreset === '7d'"
+                        (click)="setQuickRange('7d')">7 giorni</button>
+                <button class="px-3 py-2 rounded border"
+                        [class.bg-primary]="currentPreset === '14d'"
+                        [class.text-on-primary]="currentPreset === '14d'"
+                        (click)="setQuickRange('14d')">14 giorni</button>
+                <button class="px-3 py-2 rounded border"
+                        [class.bg-primary]="currentPreset === '1m'"
+                        [class.text-on-primary]="currentPreset === '1m'"
+                        (click)="setQuickRange('1m')">1 mese</button>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -32,7 +61,7 @@
         </div>
         <div class="flex flex-col lg:flex-row lg:items-center mx-6 mt-3">
             <div
-                class="text-7xl font-bold tracking-tighter leading-tight">{{fcArray[0]?.fc | number:'1.0-1'}}
+                class="text-7xl font-bold tracking-tighter leading-tight">{{fcArray[fcArray.length - 1]?.fc | number:'1.0-1'}}
                 <span class="text-3xl font-bold tracking-tighter leading-tight">Bpm</span>
             </div>
         </div>
@@ -57,7 +86,7 @@
         </div>
         <div class="flex flex-col lg:flex-row lg:items-center mx-6 mt-3">
             <div
-                class="text-7xl font-bold tracking-tighter leading-tight">{{frArray[0]?.fr | number:'1.0-1'}}
+                class="text-7xl font-bold tracking-tighter leading-tight">{{frArray[frArray.length - 1]?.fr | number:'1.0-1'}}
                 <span class="text-3xl font-bold tracking-tighter leading-tight">atti/min</span>
             </div>
         </div>
@@ -82,7 +111,7 @@
         </div>
         <div class="flex flex-col lg:flex-row lg:items-center mx-6 mt-3">
             <div
-                class="text-7xl font-bold tracking-tighter leading-tight">{{spo2Array[0]?.spo2 | number:'1.0-1'}}
+                class="text-7xl font-bold tracking-tighter leading-tight">{{spo2Array[spo2Array.length - 1]?.spo2 | number:'1.0-1'}}
                 <span class="text-3xl font-bold tracking-tighter leading-tight">%</span>
             </div>
         </div>
@@ -107,7 +136,7 @@
         </div>
         <div class="flex flex-col lg:flex-row lg:items-center mx-6 mt-3">
             <div
-                class="text-7xl font-bold tracking-tighter leading-tight">{{tempArray[0]?.temp | number:'1.0-1'}}
+                class="text-7xl font-bold tracking-tighter leading-tight">{{tempArray[tempArray.length - 1]?.temp | number:'1.0-1'}}
                 <span class="text-3xl font-bold tracking-tighter leading-tight">°C</span>
             </div>
         </div>

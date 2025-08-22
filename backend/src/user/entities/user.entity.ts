@@ -1,9 +1,4 @@
-import {
-  Entity,
-  Column,
-  ManyToOne,
-  DeleteDateColumn,
-} from 'typeorm';
+import { Entity, Column, ManyToOne, DeleteDateColumn } from 'typeorm';
 import { UserRoles } from './UserRoles.enum';
 import { Coop } from '../../coop/entities/coop.entity';
 import { BaseIdEntity } from '../../base/entities/base.entity';

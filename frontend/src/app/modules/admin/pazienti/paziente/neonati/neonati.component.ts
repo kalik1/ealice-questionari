@@ -13,11 +13,15 @@ export class NeonatiComponent implements OnInit, OnChanges {
     @Input() answers: ReadAnswerDto[];
     @Input() q?: ReadQuestionDto;
 
+    // Show global time range selector only if there is at least one neonati answer
+    hasNeonatiAnswers: boolean = false;
+
     // Global date-time range (defaults to last 7 days)
     rangeFrom: Date;
     rangeTo: Date;
     rangeFromInput: string; // for datetime-local input binding
     rangeToInput: string;   // for datetime-local input binding
+    currentPreset: '12h' | '1d' | '3d' | '7d' | '14d' | '1m' | null = '7d';
 
     // Vital signs data (using same structure as parametri component)
     fcArray: { createdAt: string; fc: number }[] = [];
@@ -38,10 +42,12 @@ export class NeonatiComponent implements OnInit, OnChanges {
 
     ngOnInit(): void {
         this.setDefaultRange();
+        this.hasNeonatiAnswers = (this.answers || []).some(a => a.questionnaire === 'neonati');
         this.buildCharts();
     }
 
     ngOnChanges(changes: SimpleChanges): void {
+        this.hasNeonatiAnswers = (this.answers || []).some(a => a.questionnaire === 'neonati');
         this.buildCharts();
     }
 
@@ -53,6 +59,7 @@ export class NeonatiComponent implements OnInit, OnChanges {
         this.rangeTo = now;
         this.rangeFromInput = this.formatDateTimeLocal(this.rangeFrom);
         this.rangeToInput = this.formatDateTimeLocal(this.rangeTo);
+        this.currentPreset = '7d';
     }
 
     onRangeInputChange(which: 'from' | 'to', value: string): void {
@@ -64,6 +71,7 @@ export class NeonatiComponent implements OnInit, OnChanges {
             this.rangeTo = parsed;
             this.rangeToInput = value;
         }
+        this.currentPreset = null; // custom range
         this.buildCharts();
     }
 
@@ -95,6 +103,7 @@ export class NeonatiComponent implements OnInit, OnChanges {
         this.rangeTo = now;
         this.rangeFromInput = this.formatDateTimeLocal(this.rangeFrom);
         this.rangeToInput = this.formatDateTimeLocal(this.rangeTo);
+        this.currentPreset = preset;
         this.buildCharts();
     }
 
@@ -114,21 +123,25 @@ export class NeonatiComponent implements OnInit, OnChanges {
         // Build vital signs arrays (same logic as parametri component)
         this.fcArray = neonatiAnswers
             .filter(a => a.answers.some(as => as.key === 'fc'))
+            .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
             .map(r => ({ createdAt: r.createdAt, fc: Number(r.answers.find(as => as.key === 'fc')?.value) }))
             .filter(a => !Number.isNaN(a.fc) && a.fc > 0);
 
         this.frArray = neonatiAnswers
             .filter(a => a.answers.some(as => as.key === 'fr'))
+            .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
             .map(r => ({ createdAt: r.createdAt, fr: Number(r.answers.find(as => as.key === 'fr')?.value) }))
             .filter(a => !Number.isNaN(a.fr) && a.fr > 0);
 
         this.spo2Array = neonatiAnswers
             .filter(a => a.answers.some(as => as.key === 'spo2'))
+            .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
             .map(r => ({ createdAt: r.createdAt, spo2: Number(r.answers.find(as => as.key === 'spo2')?.value) }))
             .filter(a => !Number.isNaN(a.spo2) && a.spo2 > 0);
 
         this.tempArray = neonatiAnswers
             .filter(a => a.answers.some(as => as.key === 'temp'))
+            .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
             .map(r => ({ createdAt: r.createdAt, temp: Number(r.answers.find(as => as.key === 'temp')?.value) }))
             .filter(a => !Number.isNaN(a.temp) && a.temp > 0);
 
