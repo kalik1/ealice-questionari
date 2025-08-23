@@ -22,4 +22,67 @@
   border-color: transparent;
 }
 
+/* Print styles */
+@media print {
+  :host {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Remove UI-only elements from print */
+  .neonati-range-buttons,
+  input[type="datetime-local"],
+  label.text-xs {
+    display: none !important;
+  }
+
+  /* Make cards compact and avoid breaking in the middle */
+  .bg-card {
+    box-shadow: none !important;
+    border: 1px solid #e5e7eb !important; /* gray-200 */
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* Compact margins/gaps inside the component */
+  .m-6 { margin: 12px !important; }
+  .mt-3 { margin-top: 8px !important; }
+  .gap-8 { gap: 12px !important; }
+
+  /* Force 4 vitals per row on print */
+  .neonati-vitals-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+  }
+  .neonati-vitals-grid > div {
+    page-break-inside: avoid;
+    break-inside: avoid;
+    min-width: 0 !important;
+  }
+  /* Override any responsive col-span utilities to ensure 1 span in print */
+  .neonati-vitals-grid > .sm\:col-span-2,
+  .neonati-vitals-grid > .lg\:col-span-1 {
+    grid-column: span 1 / span 1 !important;
+  }
+
+  /* Ensure charts render at a printable height */
+  /* Vital panels get more height in print to avoid clipping */
+  .flex.flex-col.flex-auto.bg-card.shadow.rounded-2xl.overflow-hidden {
+    min-height: 120px !important;
+  }
+  apx-chart,
+  .apexcharts-canvas {
+    height: 220px !important;
+    max-height: 220px !important;
+    width: 100% !important;
+  }
+
+  /* Hide interactive chart UI */
+  .apexcharts-toolbar,
+  .apexcharts-tooltip {
+    display: none !important;
+  }
+}
+
 

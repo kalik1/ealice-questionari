@@ -1,17 +1,20 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges, AfterViewInit, OnDestroy, ViewChildren, QueryList } from '@angular/core';
 import { ReadAnswerDto } from '../../../../../core/api/models/read-answer-dto';
 import { ReadQuestionDto } from '../../../../../core/api/models/read-question-dto';
-import { ApexAxisChartSeries, ApexOptions } from 'ng-apexcharts';
+import { ApexAxisChartSeries, ApexOptions, ChartComponent } from 'ng-apexcharts';
 
 @Component({
     selector: 'app-neonati',
     templateUrl: './neonati.component.html',
     styleUrls: ['./neonati.component.scss']
 })
-export class NeonatiComponent implements OnInit, OnChanges {
+export class NeonatiComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
 
     @Input() answers: ReadAnswerDto[];
     @Input() q?: ReadQuestionDto;
+
+    // References to all ApexCharts inside this component
+    @ViewChildren('neonatiChart') private neonatiCharts?: QueryList<ChartComponent>;
 
     // Show global time range selector only if there is at least one neonati answer
     hasNeonatiAnswers: boolean = false;
@@ -49,6 +52,32 @@ export class NeonatiComponent implements OnInit, OnChanges {
     ngOnChanges(changes: SimpleChanges): void {
         this.hasNeonatiAnswers = (this.answers || []).some(a => a.questionnaire === 'neonati');
         this.buildCharts();
+    }
+
+    ngAfterViewInit(): void {
+        // Handle print reflow for ApexCharts
+        if ('onbeforeprint' in window) {
+            window.addEventListener('beforeprint', this.beforePrintListener);
+        }
+        if ('onafterprint' in window) {
+            window.addEventListener('afterprint', this.afterPrintListener);
+        }
+        // Some browsers fire print via matchMedia
+        const mq = (window as any).matchMedia && (window as any).matchMedia('print');
+        if (mq && mq.addListener) {
+            mq.addListener((m: any) => {
+                if (m.matches) { this.beforePrintListener(); } else { this.afterPrintListener(); }
+            });
+        }
+    }
+
+    ngOnDestroy(): void {
+        window.removeEventListener('beforeprint', this.beforePrintListener);
+        window.removeEventListener('afterprint', this.afterPrintListener);
+        const mq = (window as any).matchMedia && (window as any).matchMedia('print');
+        if (mq && mq.removeListener) {
+            mq.removeListener((m: any) => { /* no-op */ });
+        }
     }
 
     // Helpers for date-time range
@@ -195,6 +224,34 @@ export class NeonatiComponent implements OnInit, OnChanges {
 
         // Build categorical timelines for string dropdowns/text responses
         this.buildCategoricalCharts(neonatiAnswers);
+    }
+
+    private beforePrintListener = (): void => {
+        // Give the browser a tick, then force a resize so ApexCharts recalculates layouts for print
+        setTimeout(() => {
+            window.dispatchEvent(new Event('resize'));
+            this.refreshAllCharts();
+        }, 0);
+    };
+    private afterPrintListener = (): void => {
+        // After printing, trigger a resize so charts go back to screen layout
+        setTimeout(() => {
+            window.dispatchEvent(new Event('resize'));
+            this.refreshAllCharts();
+        }, 0);
+    };
+
+    private refreshAllCharts(): void {
+        try {
+            this.neonatiCharts?.forEach((c) => {
+                try {
+                    // Force a reflow/update without changing options
+                    c.updateOptions({} as any, true, true);
+                } catch {
+                    try { if ((c as any).render) { (c as any).render(); } } catch (e) { /* noop */ }
+                }
+            });
+        } catch { /* noop */ }
     }
 
     private formatDateTimeLocal(d: Date): string {

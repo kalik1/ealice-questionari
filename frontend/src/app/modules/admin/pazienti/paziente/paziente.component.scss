@@ -1,0 +1,7 @@
+@media print {
+  #questionari-somministrati {
+    page-break-before: always;
+    break-before: page;
+  }
+}
+
