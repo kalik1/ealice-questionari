@@ -13,8 +13,15 @@ import { QuestionSingle } from '../questions/entities/question-single.entity';
 import { QuestionSingleResult } from '../questions/entities/question-single-result.entity';
 import { QuestionSingleOption } from '../questions/entities/question-single-options.entity';
 import { QuestionSingleResultOption } from '../questions/entities/question-single-result-options.entity';
+import { Config } from '../config';
 
 dotenvConfig({ path: '.env' });
+
+function buildMigrationPath() {
+  return Config.isDev()
+    ? 'src/migrations/*.migration.ts'
+    : 'dist/migrations/*.migration.js';
+}
 
 const config = {
   type: 'postgres',
@@ -24,7 +31,7 @@ const config = {
   password: process.env.DB_PASS || 'magical_password',
   // logging: true,
   database: process.env.DB_DATABASE || 'coop_question',
-  migrations: ['{src,dist}/migrations/*.migration.{ts,js}'],
+  migrations: [buildMigrationPath()],
   //migrations: ['src/migrations/*.migration.ts'],
   entities: [
     User,

@@ -52,8 +52,8 @@ export class Answer extends BaseIdEntity {
   notes: string;
 
   @CreateDateColumn({
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP(6)',
+    type: 'timestamptz',
+    default: () => 'CURRENT_TIMESTAMP(5)',
   })
   public createdAt: Date;
 
