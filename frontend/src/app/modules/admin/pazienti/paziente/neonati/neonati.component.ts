@@ -24,7 +24,7 @@ export class NeonatiComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     rangeTo: Date;
     rangeFromInput: string; // for datetime-local input binding
     rangeToInput: string;   // for datetime-local input binding
-    currentPreset: '12h' | '1d' | '3d' | '7d' | '14d' | '1m' | null = '7d';
+    currentPreset: '12h' | '1d' | '3d' | '7d' | '14d' | '1m' | null = '3d';
 
     // Vital signs data (using same structure as parametri component)
     fcArray: { createdAt: string; fc: number }[] = [];
@@ -315,20 +315,18 @@ export class NeonatiComponent implements OnInit, OnChanges, AfterViewInit, OnDes
 
             // Only create chart if there are enough valid values (> 0)
             if (data.length > 0) {
-                // console.log(`Creating chart for ${key}:`, data);
                 const chartData = [{
                     name: label,
                     color: '#22c55e',
                     data: data.reverse().map(p => ({
-                        x: new Date(p.createdAt).toLocaleString(),
+                        x: new Date(p.createdAt).getTime(),
                         y: p.v
                     }))
                 }];
-                //console.log(`Chart data for ${key}:`, chartData);
 
                 this.dynamicCharts.push({
                     title: label,
-                    chart: this._prepareChartData(chartData)
+                    chart: this._prepareDateTimeChartData(chartData)
                 });
             }
         });
@@ -344,7 +342,7 @@ export class NeonatiComponent implements OnInit, OnChanges, AfterViewInit, OnDes
 
         (this.q?.singleQuestion || []).forEach((sq: any) => {
             if (sq?.controlType === 'dropdown') {
-                console.log('stringKeys', sq.key, sq, labelOf(sq.key));
+                // console.log('stringKeys', sq.key, sq, labelOf(sq.key));
                 dropdownKeys.set(sq.key, { label: labelOf(sq.key), options: (sq.options || []) });
             }
         });
@@ -467,7 +465,7 @@ export class NeonatiComponent implements OnInit, OnChanges, AfterViewInit, OnDes
                 }
             };
 
-            console.log('categoricalCharts', meta.label, chart);
+            // console.log('categoricalCharts', meta.label, chart);
             this.categoricalCharts.push({ title: meta.label, chart });
         });
     }
@@ -554,6 +552,59 @@ export class NeonatiComponent implements OnInit, OnChanges, AfterViewInit, OnDes
             }
         };
         //console.log('_prepareChartData result:', result);
+        return result;
+    }
+
+    /**
+     * Prepare chart data using datetime x-axis (for dynamicCharts like categoricalCharts)
+     */
+    private _prepareDateTimeChartData(data: ApexAxisChartSeries): ApexOptions {
+        const result: ApexOptions = {
+            chart: {
+                animations: {
+                    enabled: false
+                },
+                fontFamily: 'inherit',
+                foreColor: 'inherit',
+                height: '100%',
+                type: 'area' as const,
+                sparkline: {
+                    enabled: true
+                }
+            },
+            colors: data.map(d => d.color),
+            fill: {
+                colors: data.map(d => d.color),
+                opacity: 0.5
+            },
+            series: data.map(d => ({
+                name: d.name,
+                data: d.data.map((dd: any) => ({ x: Number(dd.x), y: dd.y }))
+            })),
+            stroke: {
+                curve: 'smooth'
+            },
+            dataLabels: {
+                enabled: false
+            },
+            tooltip: {
+                followCursor: true,
+                theme: 'dark',
+                x: {
+                    formatter: (val: number): string => new Date(val).toLocaleString()
+                }
+            },
+            xaxis: {
+                type: 'datetime',
+                min: this.rangeFrom ? this.rangeFrom.getTime() : undefined,
+                max: this.rangeTo ? this.rangeTo.getTime() : undefined
+            },
+            yaxis: {
+                labels: {
+                    formatter: (val): string => val.toString()
+                }
+            }
+        };
         return result;
     }
 }

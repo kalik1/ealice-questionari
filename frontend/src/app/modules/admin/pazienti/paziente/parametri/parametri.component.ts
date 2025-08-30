@@ -92,7 +92,7 @@ export class ParametriComponent implements OnInit, OnChanges {
             }))
         }]);
 
-        console.log( this.saturazioneArray);
+        // console.log( this.saturazioneArray);
         this.pesoChartView = this._prepareChartData([{
             name: 'Peso',
             color: '#4ef838',

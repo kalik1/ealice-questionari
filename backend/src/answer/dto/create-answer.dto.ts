@@ -46,7 +46,7 @@ export class CreateAnswerDto {
   })
   @IsOptional()
   @Expose()
-  notes: string;
+  notes: string | undefined;
 
   @ApiPropertyOptional({
     type: 'string',
@@ -56,5 +56,5 @@ export class CreateAnswerDto {
   @IsOptional()
   @Expose()
   @IsDate()
-  createdAt: Date;
+  createdAt: Date | undefined;
 }
