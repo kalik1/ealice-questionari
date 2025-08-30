@@ -9,6 +9,13 @@ const inserisciQuestionarioRoutes: Route[] = [
         resolve: {
             questions: QuestionsResolver
         }
+    },
+    {
+        path: ':patientId/:answerId',
+        component: InserisciQuestionarioComponent,
+        resolve: {
+            questions: QuestionsResolver
+        }
     }
 ];
 

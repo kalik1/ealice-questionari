@@ -1,0 +1,28 @@
+apiVersion: v2
+name: coop-questionari-v2
+description: Umbrella chart for Coop Questionari v2 (OSS, Kubernetes-only)
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+dependencies:
+  - name: backend-v2
+    version: 0.1.0
+    repository: "file://charts/backend-v2"
+  - name: frontend-v2
+    version: 0.1.0
+    repository: "file://charts/frontend-v2"
+  - name: postgresql
+    version: 12.6.6
+    repository: https://charts.bitnami.com/bitnami
+    alias: pg
+  - name: grafana
+    version: 8.5.7
+    repository: https://grafana.github.io/helm-charts
+  - name: kube-prometheus-stack
+    version: 56.6.2
+    repository: https://prometheus-community.github.io/helm-charts
+    alias: monitoring
+  - name: keycloak
+    version: 22.1.6
+    repository: https://charts.bitnami.com/bitnami
+

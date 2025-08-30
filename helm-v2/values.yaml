@@ -1,0 +1,54 @@
+global:
+  domain: example.local
+  tlsEnabled: false
+
+pg:
+  fullnameOverride: pg
+  auth:
+    username: coop
+    database: coop
+    existingSecret: pg-secret
+  primary:
+    persistence:
+      enabled: true
+      size: 10Gi
+
+backend-v2:
+  image:
+    repository: coop/backend-v2
+    tag: latest
+  env:
+    DATABASE_URL: "postgresql://coop:password@pg:5432/coop"
+    KEYCLOAK_URL: "http://keycloak-http:80"
+    KEYCLOAK_REALM: coop
+    OTEL_EXPORTER_OTLP_ENDPOINT: http://monitoring-kube-prometheus-stack-otel-collector:4317
+  service:
+    type: ClusterIP
+    port: 8080
+
+frontend-v2:
+  image:
+    repository: coop/frontend-v2
+    tag: latest
+  env:
+    VITE_API_BASE_URL: "http://backend-v2:8080"
+  service:
+    type: ClusterIP
+    port: 80
+
+grafana:
+  adminPassword: admin
+
+monitoring:
+  grafana:
+    enabled: false
+  prometheus:
+    prometheusSpec:
+      scrapeInterval: 15s
+
+keycloak:
+  production: true
+  auth:
+    adminUser: admin
+    existingSecret: keycloak-admin
+

@@ -100,6 +100,14 @@
                             <mat-error>Errore Codice Assistito</mat-error>
                         </mat-form-field>
                     </div>
+
+                    <div class="flex flex-col gt-xs:flex-row mt-1 mb-2">
+                        <mat-checkbox formControlName="overrideCreatedAt">Imposta manualmente la data di creazione</mat-checkbox>
+                        <mat-form-field class="flex-auto gt-xs:pr-3 ml-4" *ngIf="pazienteForm.controls['overrideCreatedAt'].value === true">
+                            <mat-label>Data creazione</mat-label>
+                            <input matInput type="datetime-local" formControlName="createdAt">
+                        </mat-form-field>
+                    </div>
                 </div>
             </form>
 
@@ -129,7 +137,7 @@
                         [disabled]="!form.valid"
                         type="submit"
                         [color]="'primary'">
-                        Salva
+                        {{ editAnswerId ? 'Aggiorna' : 'Salva' }}
                     </button>
                 </div>
 

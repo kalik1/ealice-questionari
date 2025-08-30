@@ -9,6 +9,9 @@ import {MatSort} from '@angular/material/sort';
 import {MatPaginator} from '@angular/material/paginator';
 import {FuseConfirmationService} from '../../../../../@fuse/services/confirmation';
 import {AnswerService, PatientService, QuestionsService} from '../../../../core/api/services';
+import { LocalUserService } from 'app/core/user/local-user.service';
+import { RoleEnum } from 'app/shared/models/role.enum';
+import { Observable } from 'rxjs';
 import {MatDialog} from '@angular/material/dialog';
 import {VisualizzaRisultatiDialogComponent} from './visualizza-risultati/visulizza-risultati.dialog';
 import {MatTableDataSource} from '@angular/material/table';
@@ -36,6 +39,7 @@ export class PazienteComponent implements OnInit, OnDestroy, AfterViewInit {
     answers: ReadAnswerDto[];
     recentTransactionsTableColumns: string[] = ['assistente', /*'gender_assistente',*/ 'createdAt', 'questionario', 'azioni'];
     elencoRisposteTableDataSource = new MatTableDataSource<ReadAnswerDto>();
+    canEdit$: Observable<boolean>;
     private _unsubscribeAll: Subject<any> = new Subject<any>();
     /**
      * Constructor
@@ -49,12 +53,14 @@ export class PazienteComponent implements OnInit, OnDestroy, AfterViewInit {
         private _route: ActivatedRoute,
         public dialog: MatDialog,
         private _fuseConfirmationService: FuseConfirmationService,
+        private _localUserService: LocalUserService,
     ) {
 
         this.answers = this._route.snapshot.data['answers'] as ReadAnswerDto[];
         this.questionnaires = this._route.snapshot.data['questionnaires'] as ReadQuestionDto[];
         this.patient = this._route.snapshot.data['paziente'] as ReadPatientDto || {};
         this.elencoRisposteTableDataSource.data = this.answers;
+        this.canEdit$ = this._localUserService.user$.pipe(map(u => u.role === RoleEnum.admin || u.role === RoleEnum.coopAdmin));
     }
 
     ngOnInit(): void {
@@ -154,6 +160,10 @@ export class PazienteComponent implements OnInit, OnDestroy, AfterViewInit {
             tap(() => this.answers = [...this.answers]),
             tap(() => this.reloadResults())
         ).subscribe();
+    }
+
+    public modificaQ(answer: ReadAnswerDto): void {
+        this._router.navigate(['/inserisci-questionario', this._route.snapshot.params['id'], answer.id]);
     }
 
     reloadResults(): void {

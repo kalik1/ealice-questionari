@@ -26,6 +26,7 @@ import { PatientService } from '../patient/patient.service';
 import { ReadCoopDto } from '../coop/dto/read-coop.dto';
 import { GetUser } from '../user/get-user.decorator';
 import { User } from '../user/entities/user.entity';
+import { IsCoopAdmin } from 'src/coop/guard/isCoopAdmin';
 
 @Controller('patient/:patientId/answer')
 @ApiTags('Answer')
@@ -90,7 +91,7 @@ export class AnswerController {
   }
 
   @Patch(':id')
-  @IsCoopMember()
+  @IsCoopAdmin()
   @ApiResponse({ type: ReadCoopDto, status: HttpStatus.OK })
   @HttpCode(HttpStatus.OK)
   async update(

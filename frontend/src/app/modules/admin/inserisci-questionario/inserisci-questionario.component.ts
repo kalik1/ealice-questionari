@@ -14,6 +14,7 @@ import {HttpErrorResponse} from '@angular/common/http';
 import {BaseAnswers, IQuestionnary} from './inserisci-questionario.interfaces';
 import {ActivatedRoute} from '@angular/router';
 import { ReadQuestionDto } from 'app/core/api/models';
+import { UpdateAnswerDto } from 'app/core/api/models/update-answer-dto';
 
 @Component({
     selector: 'inserisci-questionario',
@@ -25,7 +26,9 @@ export class InserisciQuestionarioComponent implements OnInit {
     // @Input() questions: QuestionBase<string>[] | null = [];
     pazienteForm = new FormGroup({
         paziente: new FormControl(undefined, Validators.required),
-        questionnaire: new FormControl(undefined, Validators.required)
+        questionnaire: new FormControl(undefined, Validators.required),
+        overrideCreatedAt: new FormControl(false),
+        createdAt: new FormControl(null)
     });
     form!: FormGroup;
     formInfo: IQuestionnarieInfo;
@@ -39,6 +42,7 @@ export class InserisciQuestionarioComponent implements OnInit {
 
     questionnaries: ReadQuestionDto[];
     private questionMetaByKey: Record<string, any> = {};
+    private editAnswerId?: string;
 
     /**
      * Constructor
@@ -91,6 +95,47 @@ export class InserisciQuestionarioComponent implements OnInit {
             map((value: string | ReadPatientDto) => (typeof value === 'string' ? value : value.code.toString())),
             map((p: string) => (p ? this._filter(p) : this.patients.slice())),
         );
+
+        const patientId = this._route.snapshot.params['patientId'];
+        const answerId = this._route.snapshot.params['answerId'];
+        if (patientId && answerId) {
+            this.editAnswerId = answerId;
+            this._answerService.answerControllerFindOne({patientId, id: answerId}).pipe(
+                tap((answer: any) => {
+                    const readAnswer = answer as any as {
+                        questionnaire: ReadQuestionDto['questionnaire'];
+                        answers: any[];
+                        textResponses: any[];
+                        notes?: string;
+                        createdAt: string;
+                    };
+                    const qDef = this.questionnaries.find(q => q.questionnaire === readAnswer.questionnaire);
+                    if (qDef) {
+                        this.pazienteForm.controls['questionnaire'].setValue(qDef);
+                        this.setQuestionnarie({value: qDef} as any);
+                    }
+                    // Pre-fill patient selection by id if available
+                    const patient = this.patients.find(p => p.id === patientId);
+                    if (patient) {
+                        this.pazienteForm.controls['paziente'].setValue(patient);
+                    }
+                    // Build value map for form fields
+                    const valueMap: Record<string, any> = {};
+                    (readAnswer.answers || []).forEach((a) => { valueMap[a.key] = a.value; });
+                    (readAnswer.textResponses || []).forEach((t) => { valueMap[t.key] = t.value ?? ''; });
+                    if (this.form) {
+                        Object.keys(valueMap).forEach((k) => {
+                            if (this.form.controls[k]) {
+                                this.form.controls[k].setValue(valueMap[k]);
+                            }
+                        });
+                        this.form.markAsPristine();
+                    }
+                    this.pazienteForm.controls['overrideCreatedAt'].setValue(false);
+                    this.pazienteForm.controls['createdAt'].setValue(readAnswer.createdAt);
+                })
+            ).subscribe();
+        }
     }
 
     onReset($event: MouseEvent): void {
@@ -137,15 +182,31 @@ export class InserisciQuestionarioComponent implements OnInit {
             })
             .map(key => ({ key, value: String(rawAnswers[key] ?? '') }));
 
-        this._answerService.answerControllerCreate({
-            patientId: currentPaziente.id,
-            body: {
-                answers,
-                textResponses,
-                notes: rawAnswers['notes'] || null,
-                questionnaire: (this.pazienteForm.controls['questionnaire'].value as ReadQuestionDto).questionnaire
-            }
-        }).pipe(
+        const overrideCreatedAt = this.pazienteForm.controls['overrideCreatedAt'].value === true;
+        const createdAtValue = this.pazienteForm.controls['createdAt'].value;
+
+        const baseBody = {
+            answers,
+            textResponses,
+            notes: rawAnswers['notes'] || null,
+            questionnaire: (this.pazienteForm.controls['questionnaire'].value as ReadQuestionDto).questionnaire
+        } as any;
+
+        const request$: Observable<any> = this.editAnswerId
+            ? this._answerService.answerControllerUpdate({
+                id: this.editAnswerId,
+                patientId: currentPaziente.id,
+                body: {
+                    ...baseBody,
+                    ...(overrideCreatedAt && createdAtValue ? { createdAt: createdAtValue } as Partial<UpdateAnswerDto> : {})
+                }
+            })
+            : this._answerService.answerControllerCreate({
+                patientId: currentPaziente.id,
+                body: baseBody
+            });
+
+        request$.pipe(
             tap(() => this.onSendSuccess()),
             catchError((response: HttpErrorResponse) => {
                 const errorMessages: string[] =  Array.isArray(response.error?.message || []) ? response.error?.message || [] : [response.error.message];

@@ -1,0 +1,18 @@
+image:
+  repository: coop/backend-v2
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 8080
+
+env: {}
+
+resources: {}
+
+podAnnotations: {}
+
+ingress:
+  enabled: false
+

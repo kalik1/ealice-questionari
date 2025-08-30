@@ -169,6 +169,9 @@
                                 mat-cell
                                 *matCellDef="let transaction">
                                 <span class="pr-0 whitespace-nowrap">
+                                    <a href="" (click)="$event.preventDefault(); modificaQ(transaction)" class="mr-4 text-amber-600 hidden sm:inline" *ngIf="canEdit$ | async">
+                                        <strong>Modifica</strong>
+                                    </a>
                                     <a href="" (click)="showQ($event, transaction)" class="text-primary-500">
                                         <strong>Visualizza</strong>
                                     </a>
