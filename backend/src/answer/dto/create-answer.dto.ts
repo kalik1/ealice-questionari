@@ -52,7 +52,7 @@ export class CreateAnswerDto {
     type: 'string',
     format: 'date',
   })
-  @Transform(({ value }) => new Date(value))
+  @Transform(({ value }) => (value ? new Date(value) : undefined))
   @IsOptional()
   @Expose()
   @IsDate()

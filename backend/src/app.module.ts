@@ -14,6 +14,8 @@ import { AnswerModule } from './answer/answer.module';
 import { QuestionsModule } from './questions/questions.module';
 import typeorm from './config/typeorm';
 import { GraphqlFeatureModule } from './graphql/graphql.module';
+import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
+
 
 @Module({
   imports: [
@@ -25,6 +27,8 @@ import { GraphqlFeatureModule } from './graphql/graphql.module';
       driver: ApolloDriver,
       autoSchemaFile: true,
       sortSchema: true,
+      playground: false,
+      plugins: [ApolloServerPluginLandingPageLocalDefault()],
       context: ({ req, res }) => ({ req, res }),
     }),
     AuthModule,
