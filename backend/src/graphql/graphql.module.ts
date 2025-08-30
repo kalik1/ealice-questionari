@@ -11,6 +11,7 @@ import { SingleAnswer } from '../answer/entities/single-answer.entity';
 import { SingleResult } from '../answer/entities/single-result.entity';
 import { SingleTextAnswer } from '../answer/entities/single-text-answer.entity';
 import './enum.register';
+import './sdl.runtime';
 
 @Module({
   imports: [

@@ -6,6 +6,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { DataSource } from 'typeorm';
+import { extendSchema, parse } from 'graphql';
+import { buildDynamicQuestionnaireSDL } from './graphql';
 
 import { UserModule } from './user/user.module';
 import { CoopModule } from './coop/coop.module';
@@ -15,7 +18,7 @@ import { QuestionsModule } from './questions/questions.module';
 import typeorm from './config/typeorm';
 import { GraphqlFeatureModule } from './graphql/graphql.module';
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
-
+import { Config } from './config';
 
 @Module({
   imports: [
@@ -23,20 +26,36 @@ import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin
       isGlobal: true,
       load: [typeorm],
     }),
-    GraphQLModule.forRoot<ApolloDriverConfig>({
-      driver: ApolloDriver,
-      autoSchemaFile: true,
-      sortSchema: true,
-      playground: false,
-      plugins: [ApolloServerPluginLandingPageLocalDefault()],
-      context: ({ req, res }) => ({ req, res }),
-    }),
-    AuthModule,
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) =>
         configService.get('typeorm'),
     }),
+    // Moved above to allow injection into GraphQLModule factory
+    GraphQLModule.forRootAsync<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      inject: [ConfigService, DataSource],
+      useFactory: async (
+        configService: ConfigService,
+        dataSource: DataSource,
+      ) => {
+        const dynamicSDL = await buildDynamicQuestionnaireSDL(dataSource);
+        return {
+          autoSchemaFile: true,
+          sortSchema: true,
+          playground: false,
+          plugins: [
+            Config.isDev() ? ApolloServerPluginLandingPageLocalDefault() : null,
+          ],
+          context: ({ req, res }) => ({ req, res }),
+          transformSchema: (schema) =>
+            dynamicSDL.trim().length > 0
+              ? extendSchema(schema, parse(dynamicSDL))
+              : schema,
+        } as ApolloDriverConfig;
+      },
+    }),
+    AuthModule,
     UserModule,
     CoopModule,
     AnswerModule,

@@ -1,16 +1,13 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import GraphQLJSON from 'graphql-type-json';
+import { Questionnaires } from '../../base/enum/questionnaries.enum';
 
 @ObjectType()
 export class TimeseriesPointGQL {
-  @Field()
-  questionnaire: string;
+  @Field(() => Questionnaires)
+  questionnaire: Questionnaires;
 
   @Field(() => Date)
   timestamp: Date;
 
-  @Field(() => GraphQLJSON)
-  data: Record<string, any>;
+  // 'data' field is injected at runtime via SDL extension to be a union type
 }
-
-

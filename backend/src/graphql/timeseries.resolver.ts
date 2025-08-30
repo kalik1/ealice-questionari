@@ -9,6 +9,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Answer } from '../answer/entities/answer.entity';
 import { Repository } from 'typeorm';
 import { TimeseriesPointGQL } from './models/timeseries.models';
+import { Questionnaires } from '../base/enum/questionnaries.enum';
+import { questionnaireRuntime } from './runtime-schema.registry';
 
 @Resolver(() => TimeseriesPointGQL)
 export class TimeseriesResolver {
@@ -24,6 +26,8 @@ export class TimeseriesResolver {
     @Args('patientId') patientId: string,
     @Args('startTime', { type: () => Date }) startTime: Date,
     @Args('endTime', { type: () => Date, nullable: true }) endTime: Date | null,
+    @Args('questionnaires', { type: () => [Questionnaires], nullable: true })
+    questionnaires: Questionnaires[] | null,
     @CurrentCoop() coop: Coop[] | Coop,
   ): Promise<TimeseriesPointGQL[]> {
     const to = endTime ?? new Date();
@@ -39,7 +43,7 @@ export class TimeseriesResolver {
         end: to,
       })
       .orderBy('a.createdAt', 'ASC');
-   
+
     const coopIds = Array.isArray(coop)
       ? coop.map((c) => c.id)
       : coop
@@ -48,12 +52,22 @@ export class TimeseriesResolver {
     if (coopIds.length > 0) {
       qb.andWhere('a.coopId IN (:...coopIds)', { coopIds });
     }
+    if (questionnaires && questionnaires.length > 0) {
+      qb.andWhere('a.questionnaire IN (:...questionnaires)', {
+        questionnaires,
+      });
+    }
     const answers = await qb.getMany();
-    console.log(answers);
-    return answers.map((a) => ({
-      questionnaire: a.questionnaire,
-      timestamp: a.createdAt,
-      data: {
+    return answers.map((a) => {
+      const base: any = {
+        questionnaire: a.questionnaire,
+        timestamp: a.createdAt,
+      };
+      const __typename = questionnaireRuntime.getTypeNameFor(
+        String(a.questionnaire),
+      );
+      const data = {
+        __typename,
         ...(a.answers || []).reduce<Record<string, any>>((acc, s) => {
           acc[s.key] = s.value;
           return acc;
@@ -66,7 +80,8 @@ export class TimeseriesResolver {
           acc[s.key] = s.value;
           return acc;
         }, {}),
-      },
-    }));
+      };
+      return { ...base, data } as any;
+    });
   }
 }
