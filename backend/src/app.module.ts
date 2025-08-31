@@ -20,6 +20,13 @@ import { GraphqlFeatureModule } from './graphql/graphql.module';
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 import { Config } from './config';
 
+function GraphQLModulePlugins() {
+  if (Config.isDev()) {
+    return [ApolloServerPluginLandingPageLocalDefault()];
+  }
+  return [];
+}
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -44,9 +51,7 @@ import { Config } from './config';
           autoSchemaFile: true,
           sortSchema: true,
           playground: false,
-          plugins: [
-            Config.isDev() ? ApolloServerPluginLandingPageLocalDefault() : null,
-          ],
+          plugins: [...GraphQLModulePlugins()],
           context: ({ req, res }) => ({ req, res }),
           transformSchema: (schema) =>
             dynamicSDL.trim().length > 0
