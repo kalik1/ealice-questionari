@@ -45,12 +45,13 @@ function GraphQLModulePlugins() {
       useFactory: async (
         configService: ConfigService,
         dataSource: DataSource,
-      ) => {
+      ): Promise<ApolloDriverConfig> => {
         const dynamicSDL = await buildDynamicQuestionnaireSDL(dataSource);
         return {
           autoSchemaFile: true,
           sortSchema: true,
           playground: false,
+          introspection: true,
           plugins: [...GraphQLModulePlugins()],
           context: ({ req, res }) => ({ req, res }),
           transformSchema: (schema) =>
