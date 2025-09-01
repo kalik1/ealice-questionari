@@ -69,15 +69,51 @@ export class TimeseriesResolver {
       const data = {
         __typename,
         ...(a.answers || []).reduce<Record<string, any>>((acc, s) => {
-          acc[s.key] = s.value;
+          const key = s.key;
+          acc[key] = s.value;
+          const q = String(a.questionnaire);
+          const labelMap = questionnaireRuntime.getOptionLabelsFor(q, key);
+          if (labelMap) {
+            const labelKey = `${key}_label`;
+            const enumValue = questionnaireRuntime.getOptionEnumValueFor(
+              q,
+              key,
+              String(s.value),
+            );
+            //console.log('enumValue', enumValue, q, key, s.value);
+            // Prefer enum value if present; otherwise fallback to label string
+            acc[labelKey] = enumValue ?? labelMap[String(s.value)] ?? null;
+          }
           return acc;
         }, {}),
         ...(a.textResponses || []).reduce<Record<string, any>>((acc, s) => {
           acc[s.key] = s.value;
+          const q = String(a.questionnaire);
+          const labelMap = questionnaireRuntime.getOptionLabelsFor(q, s.key);
+          if (labelMap) {
+            const labelKey = `${s.key}_label`;
+            const enumValue = questionnaireRuntime.getOptionEnumValueFor(
+              q,
+              s.key,
+              String(s.value),
+            );
+            acc[labelKey] = enumValue ?? labelMap[String(s.value)] ?? null;
+          }
           return acc;
         }, {}),
         ...(a.results || []).reduce<Record<string, any>>((acc, s) => {
           acc[s.key] = s.value;
+          const q = String(a.questionnaire);
+          const labelMap = questionnaireRuntime.getOptionLabelsFor(q, s.key);
+          if (labelMap) {
+            const labelKey = `${s.key}_label`;
+            const enumValue = questionnaireRuntime.getOptionEnumValueFor(
+              q,
+              s.key,
+              String(s.value),
+            );
+            acc[labelKey] = enumValue ?? labelMap[String(s.value)] ?? null;
+          }
           return acc;
         }, {}),
       };

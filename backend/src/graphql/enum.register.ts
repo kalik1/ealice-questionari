@@ -6,5 +6,3 @@ import { QuestionValueTypeEnum } from '../questions/dto/question-value-type.enum
 registerEnumType(Questionnaires, { name: 'Questionnaires' });
 registerEnumType(ControlTypeEnum, { name: 'ControlTypeEnum' });
 registerEnumType(QuestionValueTypeEnum, { name: 'QuestionValueTypeEnum' });
-
-

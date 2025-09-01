@@ -15,7 +15,13 @@ import './sdl.runtime';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Question, Answer, SingleAnswer, SingleResult, SingleTextAnswer]),
+    TypeOrmModule.forFeature([
+      Question,
+      Answer,
+      SingleAnswer,
+      SingleResult,
+      SingleTextAnswer,
+    ]),
   ],
   providers: [
     QuestionsResolver,
@@ -26,5 +32,3 @@ import './sdl.runtime';
   ],
 })
 export class GraphqlFeatureModule {}
-
-

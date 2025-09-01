@@ -7,9 +7,24 @@ export type QuestionnaireField = {
 };
 
 export type QuestionnaireRuntimeMap = Record<string, QuestionnaireField[]>;
+export type QuestionnaireOptionLabelsMap = Record<
+  string,
+  Record<string, Record<string, string>>
+>; // questionnaire -> fieldKey -> optionKey -> label
+export type QuestionnaireOptionEnumTypeMap = Record<
+  string,
+  Record<string, string>
+>; // questionnaire -> fieldKey -> enumTypeName
+export type QuestionnaireOptionEnumValuesMap = Record<
+  string,
+  Record<string, Record<string, string>>
+>; // questionnaire -> fieldKey -> optionKey -> enumValueName
 
 class QuestionnaireRuntimeRegistry {
   private questionnaireToFields: QuestionnaireRuntimeMap = {};
+  private questionnaireToOptionLabels: QuestionnaireOptionLabelsMap = {};
+  private questionnaireToOptionEnumType: QuestionnaireOptionEnumTypeMap = {};
+  private questionnaireToOptionEnumValues: QuestionnaireOptionEnumValuesMap = {};
 
   setMapping(map: QuestionnaireRuntimeMap) {
     this.questionnaireToFields = map;
@@ -17,6 +32,64 @@ class QuestionnaireRuntimeRegistry {
 
   getMapping(): QuestionnaireRuntimeMap {
     return this.questionnaireToFields;
+  }
+
+  setOptionLabels(map: QuestionnaireOptionLabelsMap) {
+    this.questionnaireToOptionLabels = map;
+  }
+
+  getOptionLabels(): QuestionnaireOptionLabelsMap {
+    return this.questionnaireToOptionLabels;
+  }
+
+  getOptionLabel(
+    questionnaire: string,
+    fieldKey: string,
+    optionKey: string,
+  ): string | undefined {
+    return this.questionnaireToOptionLabels?.[questionnaire]?.[fieldKey]?.[
+      optionKey
+    ];
+  }
+
+  getOptionLabelsFor(
+    questionnaire: string,
+    fieldKey: string,
+  ): Record<string, string> | undefined {
+    return this.questionnaireToOptionLabels?.[questionnaire]?.[fieldKey];
+  }
+
+  setOptionEnums(map: QuestionnaireOptionEnumTypeMap) {
+    this.questionnaireToOptionEnumType = map;
+  }
+
+  getOptionEnums(): QuestionnaireOptionEnumTypeMap {
+    return this.questionnaireToOptionEnumType;
+  }
+
+  getOptionEnumTypeFor(
+    questionnaire: string,
+    fieldKey: string,
+  ): string | undefined {
+    return this.questionnaireToOptionEnumType?.[questionnaire]?.[fieldKey];
+  }
+
+  setOptionEnumValues(map: QuestionnaireOptionEnumValuesMap) {
+    this.questionnaireToOptionEnumValues = map;
+  }
+
+  getOptionEnumValues(): QuestionnaireOptionEnumValuesMap {
+    return this.questionnaireToOptionEnumValues;
+  }
+
+  getOptionEnumValueFor(
+    questionnaire: string,
+    fieldKey: string,
+    optionKey: string,
+  ): string | undefined {
+    return this.questionnaireToOptionEnumValues?.[questionnaire]?.[fieldKey]?.[
+      optionKey
+    ];
   }
 
   getFieldsFor(questionnaire: string): QuestionnaireField[] {
